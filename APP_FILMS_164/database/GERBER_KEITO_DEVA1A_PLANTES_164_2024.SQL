@@ -6,37 +6,32 @@
 -- Destruction de la BD si elle existe.
 -- Pour être certain d'avoir la dernière version des données
 
-DROP DATABASE IF EXISTS MACCAUD_OLIVIER_INFO1X_FILMS_164_2024;
+DROP DATABASE IF EXISTS GERBER_KEITO_DEVA1A_PLANTES_164_2024;
 
 -- Création d'un nouvelle base de donnée
 
-CREATE DATABASE IF NOT EXISTS MACCAUD_OLIVIER_INFO1X_FILMS_164_2024;
+CREATE DATABASE IF NOT EXISTS GERBER_KEITO_DEVA1A_PLANTES_164_2024;
 
 -- Utilisation de cette base de donnée
 
-USE MACCAUD_OLIVIER_INFO1X_FILMS_164_2024;
--- --------------------------------------------------------
--- --------------------------------------------------------
--- Hôte:                         127.0.0.1
--- Version du serveur:           8.0.30 - MySQL Community Server - GPL
--- SE du serveur:                Win64
--- HeidiSQL Version:             12.1.0.6537
--- --------------------------------------------------------
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET NAMES utf8 */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+USE GERBER_KEITO_DEVA1A_PLANTES_164_2024;
 
 
--- Listage de la structure de la base pour gerber_keito_deva1a_mpd_gestion_des_plantes
-DROP DATABASE IF EXISTS `gerber_keito_deva1a_mpd_gestion_des_plantes`;
-CREATE DATABASE IF NOT EXISTS `gerber_keito_deva1a_mpd_gestion_des_plantes` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `gerber_keito_deva1a_mpd_gestion_des_plantes`;
+
+
+-- Listage de la structure de table gerber_keito_deva1a_mpd_gestion_des_plantes. t_utillisation
+DROP TABLE IF EXISTS `t_utillisation`;
+CREATE TABLE IF NOT EXISTS `t_utillisation` (
+  `ID_Utillisation` int NOT NULL AUTO_INCREMENT COMMENT 'Un identifiant unique pour chaque utilisation.',
+  `Description_Utilisation` text COMMENT 'Description de l''utilisation de la plante.',
+  PRIMARY KEY (`ID_Utillisation`)
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Informations sur l''utilisation des plantes, par exemple à des fins médicinales ou culinaires.';
+
+-- Listage des données de la table gerber_keito_deva1a_mpd_gestion_des_plantes.t_utillisation : ~3 rows (environ)
+INSERT INTO `t_utillisation` (`ID_Utillisation`, `Description_Utilisation`) VALUES
+	(1, 'Ornemental'),
+	(2, 'Culinaire'),
+	(3, 'Fruitier');
 
 -- Listage de la structure de table gerber_keito_deva1a_mpd_gestion_des_plantes. t_exigences_de_croissance
 DROP TABLE IF EXISTS `t_exigences_de_croissance`;
@@ -48,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `t_exigences_de_croissance` (
   PRIMARY KEY (`ID_Exigence`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Cette table détaille les conditions requises pour la croissance de chaque plante.';
 
--- Listage des données de la table gerber_keito_deva1a_mpd_gestion_des_plantes.t_exigences_de_croissance : ~19 rows (environ)
+-- Listage des données de la table gerber_keito_deva1a_mpd_gestion_des_plantes.t_exigences_de_croissance : ~9 rows (environ)
 INSERT INTO `t_exigences_de_croissance` (`ID_Exigence`, `Lumière`, `Eau`, `Type_De_Sol`) VALUES
 	(1, 'Mi-ombre', 'Modérée', 'Humide'),
 	(2, 'Plein soleil à mi-ombre', 'Modérée', 'Bien drainé'),
@@ -197,7 +192,7 @@ CREATE TABLE IF NOT EXISTS `t_plantes_habitat` (
   CONSTRAINT `FK_t_plantes_habitat_t_plantes` FOREIGN KEY (`FK_Plantes_Habitat`) REFERENCES `t_plantes` (`ID_Plante`)
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table gerber_keito_deva1a_mpd_gestion_des_plantes.t_plantes_habitat : ~32 rows (environ)
+-- Listage des données de la table gerber_keito_deva1a_mpd_gestion_des_plantes.t_plantes_habitat : ~0 rows (environ)
 INSERT INTO `t_plantes_habitat` (`ID_Plantes_Habitat`, `FK_Habitat_Plantes`, `FK_Plantes_Habitat`) VALUES
 	(1, 1, 1),
 	(2, 4, 2),
@@ -245,7 +240,7 @@ CREATE TABLE IF NOT EXISTS `t_plantes_utilisation` (
   CONSTRAINT `FK_t_plantes_utilisation_t_utillisation` FOREIGN KEY (`FK_Utilisation_Plantes`) REFERENCES `t_utillisation` (`ID_Utillisation`)
 ) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table gerber_keito_deva1a_mpd_gestion_des_plantes.t_plantes_utilisation : ~33 rows (environ)
+-- Listage des données de la table gerber_keito_deva1a_mpd_gestion_des_plantes.t_plantes_utilisation : ~0 rows (environ)
 INSERT INTO `t_plantes_utilisation` (`ID_Plantes_Utilisation`, `FK_Utilisation_Plantes`, `FK_Plantes_Utilisation`) VALUES
 	(1, 1, 1),
 	(2, 1, 2),
@@ -281,23 +276,9 @@ INSERT INTO `t_plantes_utilisation` (`ID_Plantes_Utilisation`, `FK_Utilisation_P
 	(32, 3, 32),
 	(33, 1, 33);
 
--- Listage de la structure de table gerber_keito_deva1a_mpd_gestion_des_plantes. t_utillisation
-DROP TABLE IF EXISTS `t_utillisation`;
-CREATE TABLE IF NOT EXISTS `t_utillisation` (
-  `ID_Utillisation` int NOT NULL AUTO_INCREMENT COMMENT 'Un identifiant unique pour chaque utilisation.',
-  `Description_Utilisation` text COMMENT 'Description de l''utilisation de la plante.',
-  PRIMARY KEY (`ID_Utillisation`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Informations sur l''utilisation des plantes, par exemple à des fins médicinales ou culinaires.';
-
--- Listage des données de la table gerber_keito_deva1a_mpd_gestion_des_plantes.t_utillisation : ~3 rows (environ)
-INSERT INTO `t_utillisation` (`ID_Utillisation`, `Description_Utilisation`) VALUES
-	(1, 'Ornemental'),
-	(2, 'Culinaire'),
-	(3, 'Fruitier');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_CLIENT='utf8mb4' */;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
-
