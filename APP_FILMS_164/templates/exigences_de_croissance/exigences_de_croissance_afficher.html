@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %} Afficher exigences_de_croissance {% endblock %}
+{% block body %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<p>
+				exigences_de_croissance
+			</p>
+            <table class="table table-bordered table-sm">
+            {% if data %}
+                <thead>
+                    <tr>
+                        <th class="align-middle">
+                            ID_Exigence
+                        </th>
+                        <th class="align-middle">
+                            Lumière
+                        </th>
+						  <th class="align-middle">
+                            Eau
+                        </th>
+						 <th class="align-middle">
+                            Type_De_Sol
+                        </th>
+                    </tr>
+                </thead>
+            {% endif %}
+
+            {% for row in data %}
+				<tbody>
+					<tr>
+						<td class="align-middle">
+							{{ row.ID_Exigence }}
+						</td>
+						<td class="align-middle">
+							{{ row.Lumière }}
+						</td>
+						<td class="align-middle">
+							{{ row.Eau }}
+						</td>
+						<td class="align-middle">
+							{{ row.Type_De_Sol }}
+						</td>
+
+						<td class="text-center" class="align-middle">
+							<a class="btn btn-primary" href="{{ url_for('exigences_de_croissance_ajouter_wtf') }}" role="button">Ajouter</a>
+						</td>
+						<td class="text-center" class="align-middle">
+							<a class="btn btn-warning" href="{{ url_for('exigences_de_croissance_update_wtf', ID_Exigence_btn_edit_html=row.ID_Exigence) }}" role="button">Edit</a>
+						</td>
+						<td class="text-center" class="align-middle">
+							<a class="btn btn-danger" href="{{ url_for('exigences_de_croissance_delete_wtf', ID_Exigence_btn_delete_html=row.ID_Exigence) }}" role="button">Delete</a>
+						</td>
+					</tr>
+				</tbody>
+            {% else %}
+				<tbody>
+					<tr>
+						<td>
+							Aucun exigences_de_croissance.
+						</td>
+						<td>
+							<a class="btn btn-primary" href="{{ url_for('exigences_de_croissance_ajouter_wtf') }}" role="button">Ajouter</a>
+						</td>
+					</tr>
+				</tbody>
+            {% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
