@@ -134,10 +134,10 @@ INSERT INTO `t_plantes` (`ID_Plante`, `Nom_Commun`, `Nom_Scientifique`, `Famille
 -- Listage de la structure de table gerber_keito_deva1a_mpd_gestion_des_plantes. t_plantes_exigence_de_croissance
 DROP TABLE IF EXISTS `t_plantes_exigence_de_croissance`;
 CREATE TABLE IF NOT EXISTS `t_plantes_exigence_de_croissance` (
-  `ID_Plantes_Exigence_De_Coissance` int NOT NULL AUTO_INCREMENT,
+  `ID_Plante_Exigence_De_Coissance` int NOT NULL AUTO_INCREMENT,
   `FK_Plantes_Exigence` int DEFAULT NULL,
   `FK_Exigence_Plantes` int DEFAULT NULL,
-  PRIMARY KEY (`ID_Plantes_Exigence_De_Coissance`),
+  PRIMARY KEY (`ID_Plante_Exigence_De_Coissance`),
   KEY `FK_t_plantes_exigence_de_croissance_t_plantes` (`FK_Plantes_Exigence`) USING BTREE,
   KEY `FK_t_plantes_exigence_de_croissance_t_exigences_de_croissance` (`FK_Exigence_Plantes`) USING BTREE,
   CONSTRAINT `FK_t_plantes_exigence_de_croissance_t_exigences_de_croissance` FOREIGN KEY (`FK_Exigence_Plantes`) REFERENCES `t_exigences_de_croissance` (`ID_Exigence`),
@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS `t_plantes_exigence_de_croissance` (
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table gerber_keito_deva1a_mpd_gestion_des_plantes.t_plantes_exigence_de_croissance : ~32 rows (environ)
-INSERT INTO `t_plantes_exigence_de_croissance` (`ID_Plantes_Exigence_De_Coissance`, `FK_Plantes_Exigence`, `FK_Exigence_Plantes`) VALUES
+INSERT INTO `t_plantes_exigence_de_croissance` (`ID_Plante_Exigence_De_Coissance`, `FK_Plantes_Exigence`, `FK_Exigence_Plantes`) VALUES
 	(1, 1, 1),
 	(2, 2, 2),
 	(3, 3, 1),
@@ -182,10 +182,10 @@ INSERT INTO `t_plantes_exigence_de_croissance` (`ID_Plantes_Exigence_De_Coissanc
 -- Listage de la structure de table gerber_keito_deva1a_mpd_gestion_des_plantes. t_plantes_habitat
 DROP TABLE IF EXISTS `t_plantes_habitat`;
 CREATE TABLE IF NOT EXISTS `t_plantes_habitat` (
-  `ID_Plantes_Habitat` int NOT NULL AUTO_INCREMENT,
+  `ID_Plante_Habitat` int NOT NULL AUTO_INCREMENT,
   `FK_Habitat_Plantes` int DEFAULT NULL,
   `FK_Plantes_Habitat` int DEFAULT NULL,
-  PRIMARY KEY (`ID_Plantes_Habitat`),
+  PRIMARY KEY (`ID_Plante_Habitat`),
   KEY `FK_Plantes_Habitat` (`FK_Habitat_Plantes`) USING BTREE,
   KEY `FK_Habitat_Plantes` (`FK_Plantes_Habitat`) USING BTREE,
   CONSTRAINT `FK_t_plantes_habitat_t_habitat` FOREIGN KEY (`FK_Habitat_Plantes`) REFERENCES `t_habitat` (`ID_Habitat`),
@@ -193,7 +193,7 @@ CREATE TABLE IF NOT EXISTS `t_plantes_habitat` (
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table gerber_keito_deva1a_mpd_gestion_des_plantes.t_plantes_habitat : ~0 rows (environ)
-INSERT INTO `t_plantes_habitat` (`ID_Plantes_Habitat`, `FK_Habitat_Plantes`, `FK_Plantes_Habitat`) VALUES
+INSERT INTO `t_plantes_habitat` (`ID_Plante_Habitat`, `FK_Habitat_Plantes`, `FK_Plantes_Habitat`) VALUES
 	(1, 1, 1),
 	(2, 4, 2),
 	(3, 3, 3),
@@ -230,10 +230,10 @@ INSERT INTO `t_plantes_habitat` (`ID_Plantes_Habitat`, `FK_Habitat_Plantes`, `FK
 -- Listage de la structure de table gerber_keito_deva1a_mpd_gestion_des_plantes. t_plantes_utilisation
 DROP TABLE IF EXISTS `t_plantes_utilisation`;
 CREATE TABLE IF NOT EXISTS `t_plantes_utilisation` (
-  `ID_Plantes_Utilisation` int NOT NULL AUTO_INCREMENT,
+  `ID_Plante_Utilisation` int NOT NULL AUTO_INCREMENT,
   `FK_Utilisation_Plantes` int DEFAULT NULL,
   `FK_Plantes_Utilisation` int DEFAULT NULL,
-  PRIMARY KEY (`ID_Plantes_Utilisation`),
+  PRIMARY KEY (`ID_Plante_Utilisation`),
   KEY `FK_Utilisation_Plantes` (`FK_Plantes_Utilisation`) USING BTREE,
   KEY `FK_Plantes_Utilisation` (`FK_Utilisation_Plantes`) USING BTREE,
   CONSTRAINT `FK_t_plantes_utilisation_t_plantes` FOREIGN KEY (`FK_Plantes_Utilisation`) REFERENCES `t_plantes` (`ID_Plante`),
@@ -241,7 +241,7 @@ CREATE TABLE IF NOT EXISTS `t_plantes_utilisation` (
 ) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table gerber_keito_deva1a_mpd_gestion_des_plantes.t_plantes_utilisation : ~0 rows (environ)
-INSERT INTO `t_plantes_utilisation` (`ID_Plantes_Utilisation`, `FK_Utilisation_Plantes`, `FK_Plantes_Utilisation`) VALUES
+INSERT INTO `t_plantes_utilisation` (`ID_Plante_Utilisation`, `FK_Utilisation_Plantes`, `FK_Plantes_Utilisation`) VALUES
 	(1, 1, 1),
 	(2, 1, 2),
 	(3, 1, 3),

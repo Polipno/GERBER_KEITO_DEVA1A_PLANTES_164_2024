@@ -94,7 +94,6 @@ def genres_afficher(order_by, id_genre_sel):
                 Accepte le trait d'union ou l'apostrophe, et l'espace entre deux mots, mais pas plus d'une occurence.
 """
 
-
 @app.route("/genres_ajouter", methods=['GET', 'POST'])
 def genres_ajouter_wtf():
     form = FormWTFAjouterGenres()
@@ -103,10 +102,23 @@ def genres_ajouter_wtf():
             if form.validate_on_submit():
                 name_genre_wtf = form.nom_genre_wtf.data
                 name_genre = name_genre_wtf.lower()
-                valeurs_insertion_dictionnaire = {"value_intitule_genre": name_genre}
-                print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
 
-                strsql_insert_genre = """INSERT INTO t_plantes (ID_Plantes, Nom_Commun, Nom_Scientifique, Famille) VALUES (NULL,%(value_intitule_genre)s)"""
+                # Supposons que vous avez également des champs pour le nom scientifique et la famille dans votre formulaire
+                nom_scientifique = form.nom_scientifique_wtf.data.lower()  # Hypothétique champ de formulaire
+                famille = form.famille_wtf.data.lower()  # Hypothétique champ de formulaire
+
+                # Création du dictionnaire avec toutes les valeurs nécessaires
+                valeurs_insertion_dictionnaire = {
+                    "nom_commun": name_genre,
+                    "nom_scientifique": nom_scientifique,
+                    "famille": famille
+                }
+
+                # La requête SQL utilise les clés exactes du dictionnaire
+                strsql_insert_genre = """
+                INSERT INTO t_plantes (ID_Plante, Nom_Commun, Nom_Scientifique, Famille)
+                VALUES (NULL, %(nom_commun)s, %(nom_scientifique)s, %(famille)s)
+                """
                 with DBconnection() as mconn_bd:
                     mconn_bd.execute(strsql_insert_genre, valeurs_insertion_dictionnaire)
 

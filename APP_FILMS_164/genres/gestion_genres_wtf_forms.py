@@ -11,19 +11,15 @@ from wtforms.validators import Regexp
 
 
 class FormWTFAjouterGenres(FlaskForm):
-    """
-        Dans le formulaire "genres_ajouter_wtf.html" on impose que le champ soit rempli.
-        Définition d'un "bouton" submit avec un libellé personnalisé.
-    """
     nom_genre_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
-    nom_genre_wtf = StringField("Clavioter le genre ", validators=[Length(min=2, max=20, message="min 2 max 20"),
-                                                                   Regexp(nom_genre_regexp,
-                                                                          message="Pas de chiffres, de caractères "
-                                                                                  "spéciaux, "
-                                                                                  "d'espace à double, de double "
-                                                                                  "apostrophe, de double trait union")
-                                                                   ])
+    nom_genre_wtf = StringField("Clavioter le genre", validators=[
+        Length(min=2, max=20, message="min 2 max 20"),
+        Regexp(nom_genre_regexp, message="Pas de chiffres, de caractères spéciaux, d'espace à double, de double apostrophe, de double trait union")
+    ])
+    nom_scientifique_wtf = StringField("Nom Scientifique", validators=[DataRequired()])
+    famille_wtf = StringField("Famille", validators=[DataRequired()])
     submit = SubmitField("Enregistrer genre")
+
 
 
 class FormWTFUpdateGenre(FlaskForm):
