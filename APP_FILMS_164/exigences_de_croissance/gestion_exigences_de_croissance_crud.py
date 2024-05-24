@@ -306,3 +306,84 @@ def exigences_de_croissance_delete_wtf():
                            form_delete=form_delete,
                            btn_submit_del=btn_submit_del,
                            data_films_associes=data_films_attribue_exigences_de_croissance_delete)
+
+
+
+
+
+@app.route("/plantes_exigences_de_croissance_afficher/<string:order_by>/<int:id_plante_exigences_de_croissance_sel>", methods=['GET', 'POST'])
+def plantes_exigences_de_croissance_afficher(order_by, id_plante_exigences_de_croissance_sel):
+    if request.method == "GET":
+        try:
+            with DBconnection() as mc_afficher:
+                if order_by == "ASC" and id_plante_exigences_de_croissance_sel == 0:
+                    strsql_plantes_exigences_de_croissance_afficher = """SELECT 
+    p.*, 
+    e.*
+FROM 
+    t_plantes p
+JOIN 
+    t_plantes_exigence_de_croissance pe ON p.id_plante = pe.FK_plantes_Exigence
+JOIN 
+    t_exigences_de_croissance e ON pe.FK_Exigence_plantes = e.id_Exigence
+ORDER BY 
+    p.id_plante;"""
+                    mc_afficher.execute(strsql_plantes_exigences_de_croissance_afficher)
+                elif order_by == "ASC":
+                    # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
+                    # la commande MySql classique est "SELECT * FROM t_exigences_de_croissance"
+                    # Pour "lever"(raise) une erreur s'il y a des erreurs sur les noms d'attributs dans la table
+                    # donc, je précise les champs à afficher
+                    # Constitution d'un dictionnaire pour associer l'id du exigences_de_croissance sélectionné avec un nom de variable
+                    valeur_ID_Exigence_selected_dictionnaire = {"value_ID_Exigence_selected": id_plante_exigences_de_croissance_sel}
+                    strsql_plantes_exigences_de_croissance_afficher = """SELECT 
+    p.*, 
+    e.*
+FROM 
+    t_plantes p
+JOIN 
+    t_plantes_exigence_de_croissance pe ON p.id_plante = pe.FK_plantes_Exigence
+JOIN 
+    t_exigences_de_croissance e ON pe.FK_Exigence_plantes = e.id_Exigence
+ORDER BY 
+    p.id_plante;"""
+
+                    mc_afficher.execute(strsql_plantes_exigences_de_croissance_afficher, valeur_ID_Exigence_selected_dictionnaire)
+                else:
+                    strsql_plantes_exigences_de_croissance_afficher = """SELECT 
+    p.*, 
+    e.*
+FROM 
+    t_plantes p
+JOIN 
+    t_plantes_exigence_de_croissance pe ON p.id_plante = pe.FK_plantes_Exigence
+JOIN 
+    t_exigences_de_croissance e ON pe.FK_Exigence_plantes = e.id_Exigence
+ORDER BY 
+    p.id_plante;"""
+
+                    mc_afficher.execute(strsql_plantes_exigences_de_croissance_afficher)
+
+                data_exigences_de_croissance = mc_afficher.fetchall()
+
+                print("data_exigences_de_croissance ", data_exigences_de_croissance, " Type : ", type(data_exigences_de_croissance))
+
+                # Différencier les messages si la table est vide.
+                if not data_exigences_de_croissance and id_plante_exigences_de_croissance_sel == 0:
+                    flash("""La table "t_exigences_de_croissance" est vide. !!""", "warning")
+                elif not data_exigences_de_croissance and id_plante_exigences_de_croissance_sel > 0:
+                    # Si l'utilisateur change l'ID_Exigence dans l'URL et que le exigences_de_croissance n'existe pas,
+                    flash(f"Le exigences_de_croissance demandé n'existe pas !!", "warning")
+                else:
+                    # Dans tous les autres cas, c'est que la table "t_exigences_de_croissance" est vide.
+                    # OM 2020.04.09 La ligne ci-dessous permet de donner un sentiment rassurant aux utilisateurs.
+                    flash(f"Données exigences_de_croissance affichés !!", "success")
+
+        except Exception as Exception_exigences_de_croissance_afficher:
+            raise ExceptionGenresAfficher(f"fichier : {Path(__file__).name}  ;  "
+                                          f"{exigences_de_croissance_afficher.__name__} ; "
+                                          f"{Exception_exigences_de_croissance_afficher}")
+
+    # Envoie la page "HTML" au serveur.
+    return render_template("exigences_de_croissance/plantes_exigences_de_croissance_afficher.html", data=data_exigences_de_croissance)
+

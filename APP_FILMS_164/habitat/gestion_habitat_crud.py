@@ -306,3 +306,92 @@ def habitat_delete_wtf():
                            form_delete=form_delete,
                            btn_submit_del=btn_submit_del,
                            data_films_associes=data_films_attribue_habitat_delete)
+
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route("/plantes_habitat_afficher/<string:order_by>/<int:id_plante_habitat_sel>", methods=['GET', 'POST'])
+def plantes_habitat_afficher(order_by, id_plante_habitat_sel):
+    if request.method == "GET":
+        try:
+            with DBconnection() as mc_afficher:
+                if order_by == "ASC" and id_plante_habitat_sel == 0:
+                    strsql_plantes_habitat_afficher = """SELECT 
+    p.*, 
+    h.*
+FROM 
+    t_plantes p
+JOIN 
+    t_plantes_habitat ph ON p.id_plante = ph.FK_plantes_habitat
+JOIN 
+    t_habitat h ON ph.FK_habitat_plantes = h.id_habitat
+ORDER BY 
+    p.id_plante;"""
+                    mc_afficher.execute(strsql_plantes_habitat_afficher )
+                elif order_by == "ASC":
+                    # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
+                    # la commande MySql classique est "SELECT * FROM t_habitat"
+                    # Pour "lever"(raise) une erreur s'il y a des erreurs sur les noms d'attributs dans la table
+                    # donc, je précise les champs à afficher
+                    # Constitution d'un dictionnaire pour associer l'id du habitat sélectionné avec un nom de variable
+                    valeur_id_habitat_selected_dictionnaire = {"value_id_plante_habitat_selected": id_plante_habitat_sel}
+                    strsql_plantes_habitat_afficher = """SELECT 
+    p.*, 
+    h.*
+FROM 
+    t_plantes p
+JOIN 
+    t_plantes_habitat ph ON p.id_plante = ph.FK_plantes_habitat
+JOIN 
+    t_habitat h ON ph.FK_habitat_plantes = h.id_habitat
+ORDER BY 
+    p.id_plante;"""
+
+                    mc_afficher.execute(strsql_plantes_habitat_afficher , valeur_id_habitat_selected_dictionnaire)
+                else:
+                    strsql_habitat_afficher = """SELECT 
+    p.*, 
+    h.*
+FROM 
+    t_plantes p
+JOIN 
+    t_plantes_habitat ph ON p.id_plante = ph.FK_plantes_habitat
+JOIN 
+    t_habitat h ON ph.FK_habitat_plantes = h.id_habitat
+ORDER BY 
+    p.id_plante;"""
+
+                    mc_afficher.execute(strsql_habitat_afficher)
+
+                data_habitat = mc_afficher.fetchall()
+
+                print("data_habitat ", data_habitat, " Type : ", type(data_habitat))
+
+                # Différencier les messages si la table est vide.
+                if not data_habitat and id_plante_habitat_sel == 0:
+                    flash("""La table "t_habitat" est vide. !!""", "warning")
+                elif not data_habitat and id_plante_habitat_sel > 0:
+                    # Si l'utilisateur change l'id_habitat dans l'URL et que le habitat n'existe pas,
+                    flash(f"Le habitat demandé n'existe pas !!", "warning")
+                else:
+                    # Dans tous les autres cas, c'est que la table "t_habitat" est vide.
+                    # OM 2020.04.09 La ligne ci-dessous permet de donner un sentiment rassurant aux utilisateurs.
+                    flash(f"Données habitat affichés !!", "success")
+
+        except Exception as Exception_habitat_afficher:
+            raise ExceptionGenresAfficher(f"fichier : {Path(__file__).name}  ;  "
+                                          f"{habitat_afficher.__name__} ; "
+                                          f"{Exception_habitat_afficher}")
+
+    # Envoie la page "HTML" au serveur.
+    return render_template("habitat/plantes_habitat_afficher.html", data=data_habitat)
+

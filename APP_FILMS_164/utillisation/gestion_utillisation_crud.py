@@ -306,3 +306,86 @@ def utillisation_delete_wtf():
                            form_delete=form_delete,
                            btn_submit_del=btn_submit_del,
                            data_films_associes=data_films_attribue_utillisation_delete)
+
+
+
+
+
+
+@app.route("/plantes_utillisation_afficher/<string:order_by>/<int:ID_Plante_Utillisation_sel>", methods=['GET', 'POST'])
+def plantes_utillisation_afficher(order_by, ID_Plante_Utillisation_sel):
+    if request.method == "GET":
+        try:
+            with DBconnection() as mc_afficher:
+                if order_by == "ASC" and ID_Plante_Utillisation_sel == 0:
+                    strsql_plantes_utillisation_afficher = """SELECT 
+    p.*, 
+    u.*
+FROM 
+    t_plantes p
+JOIN 
+    t_plantes_utilisation pu ON p.id_plante = pu.FK_plantes_Utilisation
+JOIN 
+    t_utillisation u ON pu.FK_Utilisation_plantes = u.id_utillisation
+ORDER BY 
+    p.id_plante;"""
+                    mc_afficher.execute(strsql_plantes_utillisation_afficher)
+                elif order_by == "ASC":
+                    # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
+                    # la commande MySql classique est "SELECT * FROM t_utillisation"
+                    # Pour "lever"(raise) une erreur s'il y a des erreurs sur les noms d'attributs dans la table
+                    # donc, je précise les champs à afficher
+                    # Constitution d'un dictionnaire pour associer l'id du utillisation sélectionné avec un nom de variable
+                    valeur_ID_Utillisation_selected_dictionnaire = {"value_ID_Utillisation_selected": ID_Plante_Utillisation_sel}
+                    strsql_plantes_utillisation_afficher = """SELECT 
+    p.*, 
+    u.*
+FROM 
+    t_plantes p
+JOIN 
+    t_plantes_utilisation pu ON p.id_plante = pu.FK_plantes_Utilisation
+JOIN 
+    t_utillisation u ON pu.FK_Utilisation_plantes = u.id_utillisation
+ORDER BY 
+    p.id_plante;"""
+
+                    mc_afficher.execute(strsql_plantes_utillisation_afficher, valeur_ID_Utillisation_selected_dictionnaire)
+                else:
+                    strsql_plantes_utillisation_afficher = """SELECT 
+    p.*, 
+    u.*
+FROM 
+    t_plantes p
+JOIN 
+    t_plantes_utilisation pu ON p.id_plante = pu.FK_plantes_Utilisation
+JOIN 
+    t_utillisation u ON pu.FK_Utilisation_plantes = u.id_utillisation
+ORDER BY 
+    p.id_plante;"""
+
+                    mc_afficher.execute(strsql_plantes_utillisation_afficher)
+
+                data_utillisation = mc_afficher.fetchall()
+
+                print("data_utillisation ", data_utillisation, " Type : ", type(data_utillisation))
+
+                # Différencier les messages si la table est vide.
+                if not data_utillisation and ID_Plante_Utillisation_sel == 0:
+                    flash("""La table "t_utillisation" est vide. !!""", "warning")
+                elif not data_utillisation and ID_Plante_Utillisation_sel > 0:
+                    # Si l'utilisateur change l'ID_Utillisation dans l'URL et que le utillisation n'existe pas,
+                    flash(f"Le utillisation demandé n'existe pas !!", "warning")
+                else:
+                    # Dans tous les autres cas, c'est que la table "t_utillisation" est vide.
+                    # OM 2020.04.09 La ligne ci-dessous permet de donner un sentiment rassurant aux utilisateurs.
+                    flash(f"Données utillisation affichés !!", "success")
+
+        except Exception as Exception_utillisation_afficher:
+            raise ExceptionGenresAfficher(f"fichier : {Path(__file__).name}  ;  "
+                                          f"{utillisation_afficher.__name__} ; "
+                                          f"{Exception_utillisation_afficher}")
+
+    # Envoie la page "HTML" au serveur.
+    return render_template("utillisation/plantes_utillisation_afficher.html", data=data_utillisation)
+
+

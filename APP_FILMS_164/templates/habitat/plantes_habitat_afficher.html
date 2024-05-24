@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %} Afficher plantes habitat {% endblock %}
+{% block body %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<p>
+				Habitat
+			</p>
+            <table class="table table-bordered table-sm">
+            {% if data %}
+                <thead>
+                    <tr>
+                        <th class="align-middle">
+                            ID_Plante
+                        </th>
+                        <th class="align-middle">
+                            Nom Commun
+                        </th>
+                         <th class="align-middle">
+                            Nom Scientifique
+                        </th>
+                         <th class="align-middle">
+                            Famille
+                        </th>
+                         <th class="align-middle">
+                            ID_Habitat
+                        </th>
+                        <th class="align-middle">
+                            Description
+                        </th>
+
+
+                    </tr>
+                </thead>
+            {% endif %}
+
+            {% for row in data %}
+				<tbody>
+					<tr>
+						<td class="align-middle">
+							{{ row.ID_Plante }}
+						</td>
+						<td class="align-middle">
+							{{ row.Nom_Commun }}
+						</td>
+                        <td class="align-middle">
+							{{ row.Nom_Scientifique }}
+						</td>
+                        <td class="align-middle">
+							{{ row.Famille }}
+						</td>
+                        <td class="align-middle">
+							{{ row.ID_Habitat }}
+						</td>
+                        <td class="align-middle">
+							{{ row.Description }}
+						</td>
+
+				</tbody>
+            {% else %}
+				<tbody>
+					<tr>
+						<td>
+							Aucun habitat.
+						</td>
+
+					</tr>
+				</tbody>
+            {% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
