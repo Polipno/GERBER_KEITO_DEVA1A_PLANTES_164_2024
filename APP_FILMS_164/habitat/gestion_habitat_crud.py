@@ -93,27 +93,29 @@ def habitat_afficher(order_by, id_habitat_sel):
                 Pour comprendre [A-Za-zÀ-ÖØ-öø-ÿ] il faut se reporter à la table ASCII https://www.ascii-code.com/
                 Accepte le trait d'union ou l'apostrophe, et l'espace entre deux mots, mais pas plus d'une occurence.
 """
-
-
 @app.route("/habitat_ajouter", methods=['GET', 'POST'])
 def habitat_ajouter_wtf():
     form = FormWTFAjouterhabitat()
     if request.method == "POST":
         try:
             if form.validate_on_submit():
-                name_habitat_wtf = form.nom_habitat_wtf.data
-                name_habitat = name_habitat_wtf.lower()
-                valeurs_insertion_dictionnaire = {"value_intitule_habitat": name_habitat}
+                # Récupération des données du formulaire
+                nom_habitat_wtf = form.nom_habitat_wtf.data
+                description_habitat = nom_habitat_wtf.lower()
+
+                # Constitution du dictionnaire de valeurs
+                valeurs_insertion_dictionnaire = {"Description": description_habitat}
                 print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
 
-                strsql_insert_habitat = """INSERT INTO t_habitat (ID_habitat, Nom_Commun, Nom_Scientifique, Famille) VALUES (NULL,%(value_intitule_habitat)s)"""
+                # Insertion dans la base de données
+                strsql_insert_habitat = """INSERT INTO t_habitat (Description) VALUES (%(Description)s);"""
                 with DBconnection() as mconn_bd:
                     mconn_bd.execute(strsql_insert_habitat, valeurs_insertion_dictionnaire)
 
                 flash(f"Données insérées !!", "success")
                 print(f"Données insérées !!")
 
-                # Pour afficher et constater l'insertion de la valeur, on affiche en ordre inverse. (DESC)
+                # Pour afficher et constater l'insertion de la valeur, on affiche en ordre inverse (DESC)
                 return redirect(url_for('habitat_afficher', order_by='DESC', id_habitat_sel=0))
 
         except Exception as Exception_habitat_ajouter_wtf:

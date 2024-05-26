@@ -386,4 +386,3 @@ ORDER BY
 
     # Envoie la page "HTML" au serveur.
     return render_template("exigences_de_croissance/plantes_exigences_de_croissance_afficher.html", data=data_exigences_de_croissance)
-
