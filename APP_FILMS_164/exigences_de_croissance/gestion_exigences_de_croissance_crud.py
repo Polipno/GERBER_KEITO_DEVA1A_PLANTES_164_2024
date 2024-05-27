@@ -94,19 +94,23 @@ def exigences_de_croissance_afficher(order_by, ID_Exigence_sel):
                 Accepte le trait d'union ou l'apostrophe, et l'espace entre deux mots, mais pas plus d'une occurence.
 """
 
-
 @app.route("/exigences_de_croissance_ajouter", methods=['GET', 'POST'])
 def exigences_de_croissance_ajouter_wtf():
     form = FormWTFAjouterexigences_de_croissance()
     if request.method == "POST":
         try:
             if form.validate_on_submit():
-                name_exigences_de_croissance_wtf = form.nom_exigences_de_croissance_wtf.data
-                name_exigences_de_croissance = name_exigences_de_croissance_wtf.lower()
-                valeurs_insertion_dictionnaire = {"value_intitule_exigences_de_croissance": name_exigences_de_croissance}
+                lumiere_wtf = form.lumiere_wtf.data
+                lumiere = lumiere_wtf.lower()
+                eau = form.eau_wtf.data.lower()
+                type_de_sol = form.type_de_sol_wtf.data.lower()
+
+                # Correction des clés dans le dictionnaire pour correspondre aux noms de colonnes de la table
+                valeurs_insertion_dictionnaire = {"Lumière": lumiere, "Eau": eau, "Type_De_Sol": type_de_sol}
                 print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
 
-                strsql_insert_exigences_de_croissance = """INSERT INTO t_exigences_de_croissance (ID_Exigence, Lumière, Eau, Type_De_Sol) VALUES (NULL,%(value_intitule_exigences_de_croissance)s)"""
+                # Correction de la requête d'insertion pour utiliser les bons noms de colonnes
+                strsql_insert_exigences_de_croissance = """INSERT INTO t_exigences_de_croissance (ID_Exigence, Lumière, Eau, Type_De_Sol) VALUES (NULL, %(Lumière)s, %(Eau)s, %(Type_De_Sol)s)"""
                 with DBconnection() as mconn_bd:
                     mconn_bd.execute(strsql_insert_exigences_de_croissance, valeurs_insertion_dictionnaire)
 

@@ -5,16 +5,34 @@
 	<div class="row">
 		<div class="col-md-12">
 			<p>
-				Ajouter un nouveau exigences_de_croissance (WTForms)
+				Ajouter un nouveau exigences_de_croissance
 			</p>
 			<form action="" method="POST" novalidate>
 				<!-- Protection contre les attaques Cross-Site Request Forgery (CSRF) -->
 				{{ form.hidden_tag() }}
 				<div class="form-group">
 					<p>
-						{{ form.nom_exigences_de_croissance_wtf.label }}<br>
-						{{ form.nom_exigences_de_croissance_wtf(size=32) }}<br>
-						{% for error in form.nom_exigences_de_croissance_wtf.errors %}
+						{{ form.lumiere_wtf.label }}<br>
+						{{ form.lumiere_wtf(size=32) }}<br>
+						{% for error in form.lumiere_wtf.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}
+					</p>
+				</div>
+				<div class="form-group">
+					<p>
+						{{ form.eau_wtf.label }}<br>
+						{{ form.eau_wtf(size=32) }}<br>
+						{% for error in form.eau_wtf.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}
+					</p>
+				</div>
+				<div class="form-group">
+					<p>
+						{{ form.type_de_sol_wtf.label }}<br>
+						{{ form.type_de_sol_wtf(size=32) }}<br>
+						{% for error in form.type_de_sol_wtf.errors %}
 							<span style="color: red;">[{{ error }}]</span>
 						{% endfor %}
 					</p>

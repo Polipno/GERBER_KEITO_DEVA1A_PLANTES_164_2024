@@ -16,7 +16,7 @@ class FormWTFAjouterutillisation(FlaskForm):
         Définition d'un "bouton" submit avec un libellé personnalisé.
     """
     nom_utillisation_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
-    nom_utillisation_wtf = StringField("Clavioter le utillisation ", validators=[Length(min=2, max=20, message="min 2 max 20"),
+    nom_utillisation_wtf = StringField("Clavioter la description", validators=[Length(min=2, max=20, message="min 2 max 20"),
                                                                    Regexp(nom_utillisation_regexp,
                                                                           message="Pas de chiffres, de caractères "
                                                                                   "spéciaux, "

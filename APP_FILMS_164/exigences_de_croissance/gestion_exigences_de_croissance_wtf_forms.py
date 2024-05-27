@@ -15,14 +15,17 @@ class FormWTFAjouterexigences_de_croissance(FlaskForm):
         Dans le formulaire "exigences_de_croissance_ajouter_wtf.html" on impose que le champ soit rempli.
         Définition d'un "bouton" submit avec un libellé personnalisé.
     """
-    nom_exigences_de_croissance_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
-    nom_exigences_de_croissance_wtf = StringField("Clavioter le exigences_de_croissance ", validators=[Length(min=2, max=20, message="min 2 max 20"),
-                                                                   Regexp(nom_exigences_de_croissance_regexp,
+    lumiere_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
+    lumiere_wtf = StringField("Clavioter la lumière ", validators=[Length(min=2, max=20, message="min 2 max 20"),
+                                                                   Regexp(lumiere_regexp,
                                                                           message="Pas de chiffres, de caractères "
                                                                                   "spéciaux, "
                                                                                   "d'espace à double, de double "
                                                                                   "apostrophe, de double trait union")
                                                                    ])
+
+    eau_wtf = StringField("Eau", validators=[DataRequired()])
+    type_de_sol_wtf = StringField("Type de sol", validators=[DataRequired()])
     submit = SubmitField("Enregistrer exigences_de_croissance")
 
 

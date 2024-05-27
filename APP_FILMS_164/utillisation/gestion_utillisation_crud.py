@@ -103,10 +103,10 @@ def utillisation_ajouter_wtf():
             if form.validate_on_submit():
                 name_utillisation_wtf = form.nom_utillisation_wtf.data
                 name_utillisation = name_utillisation_wtf.lower()
-                valeurs_insertion_dictionnaire = {"value_intitule_utillisation": name_utillisation}
+                valeurs_insertion_dictionnaire = {"Description_Utilisation": name_utillisation}
                 print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
 
-                strsql_insert_utillisation = """INSERT INTO t_utillisation (ID_Utillisation, Description_Utilisation) VALUES (NULL,%(value_intitule_utillisation)s)"""
+                strsql_insert_utillisation = """INSERT INTO t_utillisation (ID_Utillisation, Description_Utilisation) VALUES (NULL,%(Description_Utilisation)s)"""
                 with DBconnection() as mconn_bd:
                     mconn_bd.execute(strsql_insert_utillisation, valeurs_insertion_dictionnaire)
 
