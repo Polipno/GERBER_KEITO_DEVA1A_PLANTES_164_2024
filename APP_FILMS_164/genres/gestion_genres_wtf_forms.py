@@ -28,7 +28,7 @@ class FormWTFUpdateGenre(FlaskForm):
     submit = SubmitField("Update genre")
 
 class FormWTFDeleteGenre(FlaskForm):
-    nom_genre_delete_wtf = StringField("Effacer ce genre")
+    nom_genre_delete_wtf = StringField("Effacer ce genre", validators=[DataRequired()])
     submit_btn_del = SubmitField("Effacer genre")
     submit_btn_conf_del = SubmitField("Etes-vous sur d'effacer ?")
     submit_btn_annuler = SubmitField("Annuler")
