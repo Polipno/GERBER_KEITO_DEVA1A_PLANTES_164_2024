@@ -19,9 +19,16 @@
 						{% endfor %}
 					</p>
 					<p>
-						{{ form_update.date_genre_wtf_essai.label }}<br>
-						{{ form_update.date_genre_wtf_essai(size=32) }}<br>
-						{% for error in form_update.date_genre_wtf_essai.errors %}
+						{{ form_update.nom_scientifique_wtf.label }}<br>
+						{{ form_update.nom_scientifique_wtf(size=32) }}<br>
+						{% for error in form_update.nom_scientifique_wtf.errors %}
+							<span style="color: red;">[{{ error }}]</span>
+						{% endfor %}
+					</p>
+					<p>
+						{{ form_update.famille_wtf.label }}<br>
+						{{ form_update.famille_wtf(size=32) }}<br>
+						{% for error in form_update.famille_wtf.errors %}
 							<span style="color: red;">[{{ error }}]</span>
 						{% endfor %}
 					</p>
@@ -32,4 +39,3 @@
 	</div>
 </div>
 {% endblock %}
-
