@@ -1,35 +1,27 @@
 {% extends "base.html" %}
-{% block title %} Editer un habitat (WTF) {% endblock %}
+{% block title %}Editer un habitat (WTF){% endblock %}
 {% block body %}
 <div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<p>
-				Editer un habitat
-			</p>
-			<form action="" method="POST" novalidate>
-				<!-- Protection contre les attaques Cross-Site Request Forgery (CSRF) -->
-				{{ form_update.hidden_tag() }}
-				<div class="form-group">
-					<p>
-						{{ form_update.nom_habitat_update_wtf.label }}<br>
-						{{ form_update.nom_habitat_update_wtf(size=32) }}<br>
-						{% for error in form_update.nom_habitat_update_wtf.errors %}
-							<span style="color: red;">[{{ error }}]</span>
-						{% endfor %}
-					</p>
-					<p>
-						{{ form_update.date_habitat_wtf_essai.label }}<br>
-						{{ form_update.date_habitat_wtf_essai(size=32) }}<br>
-						{% for error in form_update.date_habitat_wtf_essai.errors %}
-							<span style="color: red;">[{{ error }}]</span>
-						{% endfor %}
-					</p>
-				</div>
-				{{ form_update.submit(class="btn btn-primary") }}
-			</form>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                Editer un habitat
+            </p>
+            <form action="" method="POST" novalidate>
+                {{ form_update.hidden_tag() }}
+                <input type="hidden" name="id_habitat_btn_edit_html" value="{{ id_habitat }}">
+                <div class="form-group">
+                    <p>
+                        {{ form_update.nom_habitat_update_wtf.label }}<br>
+                        {{ form_update.nom_habitat_update_wtf(size=32) }}<br>
+                        {% for error in form_update.nom_habitat_update_wtf.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </p>
+                </div>
+                {{ form_update.submit(class="btn btn-primary") }}
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}
-

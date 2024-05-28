@@ -148,60 +148,72 @@ def habitat_ajouter_wtf():
 
 @app.route("/habitat_update", methods=['GET', 'POST'])
 def habitat_update_wtf():
-    # L'utilisateur vient de cliquer sur le bouton "EDIT". Récupère la valeur de "id_habitat"
-    id_habitat_update = request.values['id_habitat_btn_edit_html']
+    if request.method == "GET":
+        id_habitat_update = request.args.get('id_habitat')
+    else:
+        id_habitat_update = request.form.get('id_habitat_btn_edit_html')
 
-    # Objet formulaire pour l'UPDATE
+    print(f"Valeur de id_habitat_update (GET ou POST) : {id_habitat_update}")
+
+    if not id_habitat_update:
+        flash("Aucun ID d'habitat n'a été fourni pour la mise à jour.", "danger")
+        return redirect(url_for('habitat_afficher', order_by="ASC", id_habitat_sel=0))
+
     form_update = FormWTFUpdatehabitat()
     try:
-        # 2023.05.14 OM S'il y a des listes déroulantes dans le formulaire
-        # La validation pose quelques problèmes
-        if request.method == "POST" and form_update.submit.data:
-            # Récupèrer la valeur du champ depuis "habitat_update_wtf.html" après avoir cliqué sur "SUBMIT".
-            # Puis la convertir en lettres minuscules.
-            name_habitat_update = form_update.nom_habitat_update_wtf.data
-            name_habitat_update = name_habitat_update.lower()
-            date_habitat_essai = form_update.date_habitat_wtf_essai.data
+        if request.method == "POST":
+            print("Requête POST détectée")
+            print(f"Contenu du formulaire POST: {request.form}")
+            if form_update.validate_on_submit():
+                print("Le formulaire est validé")
+                name_habitat_update = form_update.nom_habitat_update_wtf.data
+                name_habitat_update = name_habitat_update.lower()
 
-            valeur_update_dictionnaire = {"value_id_habitat": id_habitat_update,
-                                          "value_name_habitat": name_habitat_update,
-                                          "value_date_habitat_essai": date_habitat_essai
-                                          }
-            print("valeur_update_dictionnaire ", valeur_update_dictionnaire)
+                valeur_update_dictionnaire = {
+                    "id_habitat": id_habitat_update,
+                    "Description": name_habitat_update
+                }
 
-            str_sql_update_intitulehabitat = """UPDATE t_habitat SET intitule_habitat = %(value_name_habitat)s, 
-            date_ins_habitat = %(value_date_habitat_essai)s WHERE id_habitat = %(value_id_habitat)s """
-            with DBconnection() as mconn_bd:
-                mconn_bd.execute(str_sql_update_intitulehabitat, valeur_update_dictionnaire)
+                print("valeur_update_dictionnaire ", valeur_update_dictionnaire)
 
-            flash(f"Donnée mise à jour !!", "success")
-            print(f"Donnée mise à jour !!")
+                str_sql_update_intitulehabitat = """
+                    UPDATE t_habitat 
+                    SET Description = %(Description)s 
+                    WHERE id_habitat = %(id_habitat)s 
+                """
+                with DBconnection() as mconn_bd:
+                    mconn_bd.execute(str_sql_update_intitulehabitat, valeur_update_dictionnaire)
 
-            # afficher et constater que la donnée est mise à jour.
-            # Affiche seulement la valeur modifiée, "ASC" et l'"id_habitat_update"
-            return redirect(url_for('habitat_afficher', order_by="ASC", id_habitat_sel=id_habitat_update))
+                flash("Donnée mise à jour !!", "success")
+                print("Donnée mise à jour !!")
+
+                return redirect(url_for('habitat_afficher', order_by="ASC", id_habitat_sel=id_habitat_update))
+            else:
+                print("Le formulaire n'est pas validé")
+                print(f"Erreurs du formulaire : {form_update.errors}")
+
         elif request.method == "GET":
-            # Opération sur la BD pour récupérer "id_habitat" et "intitule_habitat" de la "t_habitat"
-            str_sql_id_habitat = "SELECT id_habitat, intitule_habitat, date_ins_habitat FROM t_habitat " \
-                               "WHERE id_habitat = %(value_id_habitat)s"
+            str_sql_id_habitat = "SELECT id_habitat, Description FROM t_habitat WHERE id_habitat = %(value_id_habitat)s"
             valeur_select_dictionnaire = {"value_id_habitat": id_habitat_update}
             with DBconnection() as mybd_conn:
                 mybd_conn.execute(str_sql_id_habitat, valeur_select_dictionnaire)
-            # Une seule valeur est suffisante "fetchone()", vu qu'il n'y a qu'un seul champ "nom habitat" pour l'UPDATE
-            data_nom_habitat = mybd_conn.fetchone()
-            print("data_nom_habitat ", data_nom_habitat, " type ", type(data_nom_habitat), " habitat ",
-                  data_nom_habitat["intitule_habitat"])
+                data_nom_habitat = mybd_conn.fetchone()
 
-            # Afficher la valeur sélectionnée dans les champs du formulaire "habitat_update_wtf.html"
-            form_update.nom_habitat_update_wtf.data = data_nom_habitat["intitule_habitat"]
-            form_update.date_habitat_wtf_essai.data = data_nom_habitat["date_ins_habitat"]
+                if data_nom_habitat:
+                    print("data_nom_habitat ", data_nom_habitat, " type ", type(data_nom_habitat))
+                    form_update.nom_habitat_update_wtf.data = data_nom_habitat["Description"]
+                else:
+                    flash(f"L'habitat avec l'ID {id_habitat_update} n'existe pas.", "danger")
+                    return redirect(url_for('habitat_afficher', order_by="ASC", id_habitat_sel=0))
 
     except Exception as Exception_habitat_update_wtf:
-        raise ExceptionGenreUpdateWtf(f"fichier : {Path(__file__).name}  ;  "
-                                      f"{habitat_update_wtf.__name__} ; "
-                                      f"{Exception_habitat_update_wtf}")
+        raise ExceptionGenreUpdateWtf(
+            f"fichier : {Path(__file__).name}  ;  "
+            f"{habitat_update_wtf.__name__} ; "
+            f"{Exception_habitat_update_wtf}"
+        )
 
-    return render_template("habitat/habitat_update_wtf.html", form_update=form_update)
+    return render_template("habitat/habitat_update_wtf.html", form_update=form_update, id_habitat=id_habitat_update)
 
 
 """

@@ -2,11 +2,11 @@
 {% block title %} Afficher habitat {% endblock %}
 {% block body %}
 <div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<p>
-				Habitat
-			</p>
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                Habitat
+            </p>
             <table class="table table-bordered table-sm">
             {% if data %}
                 <thead>
@@ -23,41 +23,40 @@
             {% endif %}
 
             {% for row in data %}
-				<tbody>
-					<tr>
-						<td class="align-middle">
-							{{ row.ID_Habitat }}
-						</td>
-						<td class="align-middle">
-							{{ row.Description }}
-						</td>
+                <tbody>
+                    <tr>
+                        <td class="align-middle">
+                            {{ row.ID_Habitat }}
+                        </td>
+                        <td class="align-middle">
+                            {{ row.Description }}
+                        </td>
 
-						<td class="text-center" class="align-middle">
-							<a class="btn btn-primary" href="{{ url_for('habitat_ajouter_wtf') }}" role="button">Ajouter</a>
-						</td>
-						<td class="text-center" class="align-middle">
-							<a class="btn btn-warning" href="{{ url_for('habitat_update_wtf', id_habitat_btn_edit_html=row.id_habitat) }}" role="button">Edit</a>
-						</td>
-						<td class="text-center" class="align-middle">
-							<a class="btn btn-danger" href="{{ url_for('habitat_delete_wtf', id_habitat_btn_delete_html=row.id_habitat) }}" role="button">Delete</a>
-						</td>
-					</tr>
-				</tbody>
+                        <td class="text-center" class="align-middle">
+                            <a class="btn btn-primary" href="{{ url_for('habitat_ajouter_wtf') }}" role="button">Ajouter</a>
+                        </td>
+                        <td class="text-center" class="align-middle">
+                            <a class="btn btn-warning" href="{{ url_for('habitat_update_wtf', id_habitat=row.ID_Habitat) }}" role="button">Edit</a>
+                        </td>
+                        <td class="text-center" class="align-middle">
+                            <a class="btn btn-danger" href="{{ url_for('habitat_delete_wtf', id_habitat_btn_delete_html=row.ID_Habitat) }}" role="button">Delete</a>
+                        </td>
+                    </tr>
+                </tbody>
             {% else %}
-				<tbody>
-					<tr>
-						<td>
-							Aucun habitat.
-						</td>
-						<td>
-							<a class="btn btn-primary" href="{{ url_for('habitat_ajouter_wtf') }}" role="button">Ajouter</a>
-						</td>
-					</tr>
-				</tbody>
+                <tbody>
+                    <tr>
+                        <td>
+                            Aucun habitat.
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" href="{{ url_for('habitat_ajouter_wtf') }}" role="button">Ajouter</a>
+                        </td>
+                    </tr>
+                </tbody>
             {% endfor %}
-			</table>
-		</div>
-	</div>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}
-

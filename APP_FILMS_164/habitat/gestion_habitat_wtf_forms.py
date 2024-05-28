@@ -25,24 +25,12 @@ class FormWTFAjouterhabitat(FlaskForm):
                                                                    ])
     submit = SubmitField("Enregistrer habitat")
 
-
 class FormWTFUpdatehabitat(FlaskForm):
-    """
-        Dans le formulaire "habitat_update_wtf.html" on impose que le champ soit rempli.
-        Définition d'un "bouton" submit avec un libellé personnalisé.
-    """
     nom_habitat_update_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
-    nom_habitat_update_wtf = StringField("Clavioter le habitat ", validators=[Length(min=2, max=20, message="min 2 max 20"),
-                                                                          Regexp(nom_habitat_update_regexp,
-                                                                                 message="Pas de chiffres, de "
-                                                                                         "caractères "
-                                                                                         "spéciaux, "
-                                                                                         "d'espace à double, de double "
-                                                                                         "apostrophe, de double trait "
-                                                                                         "union")
-                                                                          ])
-    date_habitat_wtf_essai = DateField("Essai date", validators=[InputRequired("Date obligatoire"),
-                                                               DataRequired("Date non valide")])
+    nom_habitat_update_wtf = StringField("Clavioter le habitat ", validators=[
+        Length(min=2, max=20, message="min 2 max 20"),
+        Regexp(nom_habitat_update_regexp, message="Pas de chiffres, de caractères spéciaux, d'espace à double, de double apostrophe, de double trait union")
+    ])
     submit = SubmitField("Update habitat")
 
 
