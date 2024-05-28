@@ -2,34 +2,40 @@
 {% block title %} Editer un exigences_de_croissance (WTF) {% endblock %}
 {% block body %}
 <div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<p>
-				Editer un exigences_de_croissance
-			</p>
-			<form action="" method="POST" novalidate>
-				<!-- Protection contre les attaques Cross-Site Request Forgery (CSRF) -->
-				{{ form_update.hidden_tag() }}
-				<div class="form-group">
-					<p>
-						{{ form_update.nom_exigences_de_croissance_update_wtf.label }}<br>
-						{{ form_update.nom_exigences_de_croissance_update_wtf(size=32) }}<br>
-						{% for error in form_update.nom_exigences_de_croissance_update_wtf.errors %}
-							<span style="color: red;">[{{ error }}]</span>
-						{% endfor %}
-					</p>
-					<p>
-						{{ form_update.date_exigences_de_croissance_wtf_essai.label }}<br>
-						{{ form_update.date_exigences_de_croissance_wtf_essai(size=32) }}<br>
-						{% for error in form_update.date_exigences_de_croissance_wtf_essai.errors %}
-							<span style="color: red;">[{{ error }}]</span>
-						{% endfor %}
-					</p>
-				</div>
-				{{ form_update.submit(class="btn btn-primary") }}
-			</form>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                Editer un exigences_de_croissance
+            </p>
+            <form action="" method="POST" novalidate>
+                <!-- Protection contre les attaques Cross-Site Request Forgery (CSRF) -->
+                {{ form_update.hidden_tag() }}
+                <div class="form-group">
+                    <p>
+                        {{ form_update.nom_exigences_de_croissance_update_wtf.label }}<br>
+                        {{ form_update.nom_exigences_de_croissance_update_wtf(size=32) }}<br>
+                        {% for error in form_update.nom_exigences_de_croissance_update_wtf.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </p>
+                    <p>
+                        {{ form_update.eau_wtf.label }}<br>
+                        {{ form_update.eau_wtf(size=32) }}<br>
+                        {% for error in form_update.eau_wtf.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </p>
+                    <p>
+                        {{ form_update.type_de_sol_wtf.label }}<br>
+                        {{ form_update.type_de_sol_wtf(size=32) }}<br>
+                        {% for error in form_update.type_de_sol_wtf.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </p>
+                </div>
+                {{ form_update.submit(class="btn btn-primary") }}
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}
-

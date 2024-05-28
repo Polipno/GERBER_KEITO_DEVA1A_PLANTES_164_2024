@@ -143,56 +143,43 @@ def utillisation_ajouter_wtf():
                 Accepte le trait d'union ou l'apostrophe, et l'espace entre deux mots, mais pas plus d'une occurence.
 """
 
-
 @app.route("/utillisation_update", methods=['GET', 'POST'])
 def utillisation_update_wtf():
-    # L'utilisateur vient de cliquer sur le bouton "EDIT". Récupère la valeur de "ID_Utillisation"
     ID_Utillisation_update = request.values['ID_Utillisation_btn_edit_html']
 
-    # Objet formulaire pour l'UPDATE
     form_update = FormWTFUpdateutillisation()
     try:
-        # 2023.05.14 OM S'il y a des listes déroulantes dans le formulaire
-        # La validation pose quelques problèmes
         if request.method == "POST" and form_update.submit.data:
-            # Récupèrer la valeur du champ depuis "utillisation_update_wtf.html" après avoir cliqué sur "SUBMIT".
-            # Puis la convertir en lettres minuscules.
-            name_utillisation_update = form_update.nom_utillisation_update_wtf.data
-            name_utillisation_update = name_utillisation_update.lower()
-            date_utillisation_essai = form_update.date_utillisation_wtf_essai.data
+            name_utillisation_update = form_update.nom_utillisation_update_wtf.data.lower()
 
-            valeur_update_dictionnaire = {"value_ID_Utillisation": ID_Utillisation_update,
-                                          "value_name_utillisation": name_utillisation_update,
-                                          "value_date_utillisation_essai": date_utillisation_essai
-                                          }
-            print("valeur_update_dictionnaire ", valeur_update_dictionnaire)
+            valeur_update_dictionnaire = {
+                "ID_Utillisation": ID_Utillisation_update,
+                "Description_Utilisation": name_utillisation_update
+            }
 
-            str_sql_update_intituleutillisation = """UPDATE t_utillisation SET intitule_utillisation = %(value_name_utillisation)s, 
-            date_ins_utillisation = %(value_date_utillisation_essai)s WHERE ID_Utillisation = %(value_ID_Utillisation)s """
+            str_sql_update_intituleutillisation = """
+                UPDATE t_utillisation 
+                SET Description_Utilisation = %(Description_Utilisation)s 
+                WHERE ID_Utillisation = %(ID_Utillisation)s
+            """
             with DBconnection() as mconn_bd:
                 mconn_bd.execute(str_sql_update_intituleutillisation, valeur_update_dictionnaire)
 
-            flash(f"Donnée mise à jour !!", "success")
-            print(f"Donnée mise à jour !!")
+            flash("Donnée mise à jour !!", "success")
 
-            # afficher et constater que la donnée est mise à jour.
-            # Affiche seulement la valeur modifiée, "ASC" et l'"ID_Utillisation_update"
             return redirect(url_for('utillisation_afficher', order_by="ASC", ID_Utillisation_sel=ID_Utillisation_update))
         elif request.method == "GET":
-            # Opération sur la BD pour récupérer "ID_Utillisation" et "intitule_utillisation" de la "t_utillisation"
-            str_sql_ID_Utillisation = "SELECT ID_Utillisation, intitule_utillisation, date_ins_utillisation FROM t_utillisation " \
-                               "WHERE ID_Utillisation = %(value_ID_Utillisation)s"
-            valeur_select_dictionnaire = {"value_ID_Utillisation": ID_Utillisation_update}
+            str_sql_ID_Utillisation = """
+                SELECT ID_Utillisation, Description_Utilisation 
+                FROM t_utillisation 
+                WHERE ID_Utillisation = %(ID_Utillisation)s
+            """
+            valeur_select_dictionnaire = {"ID_Utillisation": ID_Utillisation_update}
             with DBconnection() as mybd_conn:
                 mybd_conn.execute(str_sql_ID_Utillisation, valeur_select_dictionnaire)
-            # Une seule valeur est suffisante "fetchone()", vu qu'il n'y a qu'un seul champ "nom utillisation" pour l'UPDATE
-            data_nom_utillisation = mybd_conn.fetchone()
-            print("data_nom_utillisation ", data_nom_utillisation, " type ", type(data_nom_utillisation), " utillisation ",
-                  data_nom_utillisation["intitule_utillisation"])
+                data_nom_utillisation = mybd_conn.fetchone()
 
-            # Afficher la valeur sélectionnée dans les champs du formulaire "utillisation_update_wtf.html"
-            form_update.nom_utillisation_update_wtf.data = data_nom_utillisation["intitule_utillisation"]
-            form_update.date_utillisation_wtf_essai.data = data_nom_utillisation["date_ins_utillisation"]
+            form_update.nom_utillisation_update_wtf.data = data_nom_utillisation["Description_Utilisation"]
 
     except Exception as Exception_utillisation_update_wtf:
         raise ExceptionGenreUpdateWtf(f"fichier : {Path(__file__).name}  ;  "

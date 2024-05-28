@@ -156,47 +156,41 @@ def exigences_de_croissance_update_wtf():
     # Objet formulaire pour l'UPDATE
     form_update = FormWTFUpdateexigences_de_croissance()
     try:
-        # 2023.05.14 OM S'il y a des listes déroulantes dans le formulaire
-        # La validation pose quelques problèmes
         if request.method == "POST" and form_update.submit.data:
             # Récupèrer la valeur du champ depuis "exigences_de_croissance_update_wtf.html" après avoir cliqué sur "SUBMIT".
             # Puis la convertir en lettres minuscules.
-            name_exigences_de_croissance_update = form_update.nom_exigences_de_croissance_update_wtf.data
-            name_exigences_de_croissance_update = name_exigences_de_croissance_update.lower()
-            date_exigences_de_croissance_essai = form_update.date_exigences_de_croissance_wtf_essai.data
+            name_exigences_de_croissance_update = form_update.nom_exigences_de_croissance_update_wtf.data.lower()
+            eau_update = form_update.eau_wtf.data.lower()
+            type_de_sol_update = form_update.type_de_sol_wtf.data.lower()
 
-            valeur_update_dictionnaire = {"value_ID_Exigence": ID_Exigence_update,
-                                          "value_name_exigences_de_croissance": name_exigences_de_croissance_update,
-                                          "value_date_exigences_de_croissance_essai": date_exigences_de_croissance_essai
-                                          }
+            valeur_update_dictionnaire = {
+                "ID_Exigence": ID_Exigence_update,
+                "Lumière": name_exigences_de_croissance_update,
+                "Eau": eau_update,
+                "Type_De_Sol": type_de_sol_update
+            }
             print("valeur_update_dictionnaire ", valeur_update_dictionnaire)
 
-            str_sql_update_intituleexigences_de_croissance = """UPDATE t_exigences_de_croissance SET intitule_exigences_de_croissance = %(value_name_exigences_de_croissance)s, 
-            date_ins_exigences_de_croissance = %(value_date_exigences_de_croissance_essai)s WHERE ID_Exigence = %(value_ID_Exigence)s """
+            str_sql_update_exigences_de_croissance = """UPDATE t_exigences_de_croissance SET Lumière = %(Lumière)s, 
+                                                       Eau = %(Eau)s, Type_De_Sol = %(Type_De_Sol)s WHERE id_exigence = %(ID_Exigence)s"""
             with DBconnection() as mconn_bd:
-                mconn_bd.execute(str_sql_update_intituleexigences_de_croissance, valeur_update_dictionnaire)
+                mconn_bd.execute(str_sql_update_exigences_de_croissance, valeur_update_dictionnaire)
 
             flash(f"Donnée mise à jour !!", "success")
             print(f"Donnée mise à jour !!")
 
-            # afficher et constater que la donnée est mise à jour.
-            # Affiche seulement la valeur modifiée, "ASC" et l'"ID_Exigence_update"
             return redirect(url_for('exigences_de_croissance_afficher', order_by="ASC", ID_Exigence_sel=ID_Exigence_update))
         elif request.method == "GET":
-            # Opération sur la BD pour récupérer "ID_Exigence" et "intitule_exigences_de_croissance" de la "t_exigences_de_croissance"
-            str_sql_ID_Exigence = "SELECT ID_Exigence, intitule_exigences_de_croissance, date_ins_exigences_de_croissance FROM t_exigences_de_croissance " \
-                               "WHERE ID_Exigence = %(value_ID_Exigence)s"
-            valeur_select_dictionnaire = {"value_ID_Exigence": ID_Exigence_update}
+            str_sql_ID_Exigence = "SELECT id_exigence, Lumière, Eau, Type_De_Sol FROM t_exigences_de_croissance WHERE id_exigence = %(ID_Exigence)s"
+            valeur_select_dictionnaire = {"ID_Exigence": ID_Exigence_update}
             with DBconnection() as mybd_conn:
                 mybd_conn.execute(str_sql_ID_Exigence, valeur_select_dictionnaire)
-            # Une seule valeur est suffisante "fetchone()", vu qu'il n'y a qu'un seul champ "nom exigences_de_croissance" pour l'UPDATE
             data_nom_exigences_de_croissance = mybd_conn.fetchone()
-            print("data_nom_exigences_de_croissance ", data_nom_exigences_de_croissance, " type ", type(data_nom_exigences_de_croissance), " exigences_de_croissance ",
-                  data_nom_exigences_de_croissance["intitule_exigences_de_croissance"])
+            print("data_nom_exigences_de_croissance ", data_nom_exigences_de_croissance, " type ", type(data_nom_exigences_de_croissance))
 
-            # Afficher la valeur sélectionnée dans les champs du formulaire "exigences_de_croissance_update_wtf.html"
-            form_update.nom_exigences_de_croissance_update_wtf.data = data_nom_exigences_de_croissance["intitule_exigences_de_croissance"]
-            form_update.date_exigences_de_croissance_wtf_essai.data = data_nom_exigences_de_croissance["date_ins_exigences_de_croissance"]
+            form_update.nom_exigences_de_croissance_update_wtf.data = data_nom_exigences_de_croissance["Lumière"]
+            form_update.eau_wtf.data = data_nom_exigences_de_croissance["Eau"]
+            form_update.type_de_sol_wtf.data = data_nom_exigences_de_croissance["Type_De_Sol"]
 
     except Exception as Exception_exigences_de_croissance_update_wtf:
         raise ExceptionGenreUpdateWtf(f"fichier : {Path(__file__).name}  ;  "

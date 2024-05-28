@@ -44,8 +44,9 @@ class FormWTFUpdateexigences_de_croissance(FlaskForm):
                                                                                          "apostrophe, de double trait "
                                                                                          "union")
                                                                           ])
-    date_exigences_de_croissance_wtf_essai = DateField("Essai date", validators=[InputRequired("Date obligatoire"),
-                                                               DataRequired("Date non valide")])
+    eau_wtf = StringField("Eau", validators=[DataRequired()])
+
+    type_de_sol_wtf = StringField("Type de sol", validators=[DataRequired()])
     submit = SubmitField("Update exigences_de_croissance")
 
 

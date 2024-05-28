@@ -27,23 +27,13 @@ class FormWTFAjouterutillisation(FlaskForm):
 
 
 class FormWTFUpdateutillisation(FlaskForm):
-    """
-        Dans le formulaire "utillisation_update_wtf.html" on impose que le champ soit rempli.
-        Définition d'un "bouton" submit avec un libellé personnalisé.
-    """
     nom_utillisation_update_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
-    nom_utillisation_update_wtf = StringField("Clavioter le utillisation ", validators=[Length(min=2, max=20, message="min 2 max 20"),
-                                                                          Regexp(nom_utillisation_update_regexp,
-                                                                                 message="Pas de chiffres, de "
-                                                                                         "caractères "
-                                                                                         "spéciaux, "
-                                                                                         "d'espace à double, de double "
-                                                                                         "apostrophe, de double trait "
-                                                                                         "union")
-                                                                          ])
-    date_utillisation_wtf_essai = DateField("Essai date", validators=[InputRequired("Date obligatoire"),
-                                                               DataRequired("Date non valide")])
+    nom_utillisation_update_wtf = StringField("Clavioter le utillisation", validators=[
+        Length(min=2, max=20, message="min 2 max 20"),
+        Regexp(nom_utillisation_update_regexp, message="Pas de chiffres, de caractères spéciaux, d'espace à double, de double apostrophe, de double trait union")
+    ])
     submit = SubmitField("Update utillisation")
+
 
 
 class FormWTFDeleteutillisation(FlaskForm):
