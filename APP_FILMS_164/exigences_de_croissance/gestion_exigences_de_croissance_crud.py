@@ -254,7 +254,7 @@ def exigences_de_croissance_delete_wtf():
                     mconn_bd.execute(str_sql_delete_films_exigences_de_croissance, valeur_delete_dictionnaire)
                     mconn_bd.execute(str_sql_delete_idexigences_de_croissance, valeur_delete_dictionnaire)
 
-                flash(f"exigences_de_croissance définitivement effacé !!", "success")
+                flash(f"Exigences de croissance définitivement effacé !!", "success")
                 print(f"exigences_de_croissance définitivement effacé !!")
 
                 # afficher les données

@@ -16,7 +16,7 @@ class FormWTFAjouterexigences_de_croissance(FlaskForm):
         Définition d'un "bouton" submit avec un libellé personnalisé.
     """
     lumiere_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
-    lumiere_wtf = StringField("Clavioter la lumière ", validators=[Length(min=2, max=20, message="min 2 max 20"),
+    lumiere_wtf = StringField("lumière ", validators=[Length(min=2, max=20, message="min 2 max 20"),
                                                                    Regexp(lumiere_regexp,
                                                                           message="Pas de chiffres, de caractères "
                                                                                   "spéciaux, "
@@ -26,7 +26,7 @@ class FormWTFAjouterexigences_de_croissance(FlaskForm):
 
     eau_wtf = StringField("Eau", validators=[DataRequired()])
     type_de_sol_wtf = StringField("Type de sol", validators=[DataRequired()])
-    submit = SubmitField("Enregistrer exigences_de_croissance")
+    submit = SubmitField("Enregistrer")
 
 
 class FormWTFUpdateexigences_de_croissance(FlaskForm):
@@ -35,7 +35,7 @@ class FormWTFUpdateexigences_de_croissance(FlaskForm):
         Définition d'un "bouton" submit avec un libellé personnalisé.
     """
     nom_exigences_de_croissance_update_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
-    nom_exigences_de_croissance_update_wtf = StringField("Clavioter le exigences_de_croissance ", validators=[Length(min=2, max=20, message="min 2 max 20"),
+    nom_exigences_de_croissance_update_wtf = StringField("lumière", validators=[Length(min=2, max=20, message="min 2 max 20"),
                                                                           Regexp(nom_exigences_de_croissance_update_regexp,
                                                                                  message="Pas de chiffres, de "
                                                                                          "caractères "
@@ -47,7 +47,7 @@ class FormWTFUpdateexigences_de_croissance(FlaskForm):
     eau_wtf = StringField("Eau", validators=[DataRequired()])
 
     type_de_sol_wtf = StringField("Type de sol", validators=[DataRequired()])
-    submit = SubmitField("Update exigences_de_croissance")
+    submit = SubmitField("Update")
 
 
 class FormWTFDeleteexigences_de_croissance(FlaskForm):
@@ -59,7 +59,7 @@ class FormWTFDeleteexigences_de_croissance(FlaskForm):
         submit_btn_conf_del : Bouton de confirmation pour effacer un "exigences_de_croissance".
         submit_btn_annuler : Bouton qui permet d'afficher la table "t_exigences_de_croissance".
     """
-    nom_exigences_de_croissance_delete_wtf = StringField("Effacer ce exigences_de_croissance")
-    submit_btn_del = SubmitField("Effacer exigences_de_croissance")
+    nom_exigences_de_croissance_delete_wtf = StringField("Effacer cette Exigences de croissance")
+    submit_btn_del = SubmitField("Effacer Exigences de croissance")
     submit_btn_conf_del = SubmitField("Etes-vous sur d'effacer ?")
     submit_btn_annuler = SubmitField("Annuler")

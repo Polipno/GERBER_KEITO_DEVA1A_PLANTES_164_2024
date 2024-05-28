@@ -16,23 +16,23 @@ class FormWTFAjouterutillisation(FlaskForm):
         Définition d'un "bouton" submit avec un libellé personnalisé.
     """
     nom_utillisation_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
-    nom_utillisation_wtf = StringField("Clavioter la description", validators=[Length(min=2, max=20, message="min 2 max 20"),
+    nom_utillisation_wtf = StringField("Description", validators=[Length(min=2, max=20, message="min 2 max 20"),
                                                                    Regexp(nom_utillisation_regexp,
                                                                           message="Pas de chiffres, de caractères "
                                                                                   "spéciaux, "
                                                                                   "d'espace à double, de double "
                                                                                   "apostrophe, de double trait union")
                                                                    ])
-    submit = SubmitField("Enregistrer utillisation")
+    submit = SubmitField("Enregistrer")
 
 
 class FormWTFUpdateutillisation(FlaskForm):
     nom_utillisation_update_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
-    nom_utillisation_update_wtf = StringField("Clavioter le utillisation", validators=[
+    nom_utillisation_update_wtf = StringField("Description", validators=[
         Length(min=2, max=20, message="min 2 max 20"),
         Regexp(nom_utillisation_update_regexp, message="Pas de chiffres, de caractères spéciaux, d'espace à double, de double apostrophe, de double trait union")
     ])
-    submit = SubmitField("Update utillisation")
+    submit = SubmitField("Update")
 
 
 
@@ -45,7 +45,7 @@ class FormWTFDeleteutillisation(FlaskForm):
         submit_btn_conf_del : Bouton de confirmation pour effacer un "utillisation".
         submit_btn_annuler : Bouton qui permet d'afficher la table "t_utillisation".
     """
-    nom_utillisation_delete_wtf = StringField("Effacer ce utillisation")
-    submit_btn_del = SubmitField("Effacer utillisation")
+    nom_utillisation_delete_wtf = StringField("Effacer cette Utillisation")
+    submit_btn_del = SubmitField("Effacer Utillisation")
     submit_btn_conf_del = SubmitField("Etes-vous sur d'effacer ?")
     submit_btn_annuler = SubmitField("Annuler")

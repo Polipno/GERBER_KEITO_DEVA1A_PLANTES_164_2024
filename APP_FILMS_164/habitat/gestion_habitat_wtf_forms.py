@@ -16,22 +16,22 @@ class FormWTFAjouterhabitat(FlaskForm):
         Définition d'un "bouton" submit avec un libellé personnalisé.
     """
     nom_habitat_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
-    nom_habitat_wtf = StringField("Clavioter le habitat ", validators=[Length(min=2, max=20, message="min 2 max 20"),
+    nom_habitat_wtf = StringField("Description", validators=[Length(min=2, max=20, message="min 2 max 20"),
                                                                    Regexp(nom_habitat_regexp,
                                                                           message="Pas de chiffres, de caractères "
                                                                                   "spéciaux, "
                                                                                   "d'espace à double, de double "
                                                                                   "apostrophe, de double trait union")
                                                                    ])
-    submit = SubmitField("Enregistrer habitat")
+    submit = SubmitField("Enregistrer")
 
 class FormWTFUpdatehabitat(FlaskForm):
     nom_habitat_update_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
-    nom_habitat_update_wtf = StringField("Clavioter le habitat ", validators=[
+    nom_habitat_update_wtf = StringField("Description", validators=[
         Length(min=2, max=20, message="min 2 max 20"),
         Regexp(nom_habitat_update_regexp, message="Pas de chiffres, de caractères spéciaux, d'espace à double, de double apostrophe, de double trait union")
     ])
-    submit = SubmitField("Update habitat")
+    submit = SubmitField("Update")
 
 
 class FormWTFDeletehabitat(FlaskForm):
@@ -43,7 +43,7 @@ class FormWTFDeletehabitat(FlaskForm):
         submit_btn_conf_del : Bouton de confirmation pour effacer un "habitat".
         submit_btn_annuler : Bouton qui permet d'afficher la table "t_habitat".
     """
-    nom_habitat_delete_wtf = StringField("Effacer ce habitat")
-    submit_btn_del = SubmitField("Effacer habitat")
+    nom_habitat_delete_wtf = StringField("Effacer ce Habitat")
+    submit_btn_del = SubmitField("Effacer Habitat")
     submit_btn_conf_del = SubmitField("Etes-vous sur d'effacer ?")
     submit_btn_annuler = SubmitField("Annuler")

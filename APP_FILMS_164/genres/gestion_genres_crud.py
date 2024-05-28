@@ -241,7 +241,7 @@ def genre_delete_wtf():
                 return redirect(url_for("genres_afficher", order_by="ASC", id_genre_sel=0))
 
             if form_delete.submit_btn_conf_del.data:
-                flash(f"Effacer le genre de façon définitive de la BD !!!", "danger")
+                flash(f"Effacer la Plante de façon définitive de la BD !!!", "danger")
                 btn_submit_del = True
 
             if form_delete.submit_btn_del.data:
@@ -252,8 +252,8 @@ def genre_delete_wtf():
                 with DBconnection() as mconn_bd:
                     mconn_bd.execute(str_sql_delete_genre, valeur_delete_dictionnaire)
 
-                flash(f"Genre définitivement effacé !!", "success")
-                print(f"Genre définitivement effacé !!")
+                flash(f"Plante définitivement effacé !!", "success")
+                print(f"Plante définitivement effacé !!")
 
                 return redirect(url_for('genres_afficher', order_by="ASC", id_genre_sel=0))
 
