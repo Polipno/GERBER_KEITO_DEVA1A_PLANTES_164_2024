@@ -47,3 +47,25 @@ class FormWTFDeletehabitat(FlaskForm):
     submit_btn_del = SubmitField("Effacer Habitat")
     submit_btn_conf_del = SubmitField("Etes-vous sur d'effacer ?")
     submit_btn_annuler = SubmitField("Annuler")
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, IntegerField, SubmitField, HiddenField
+from wtforms.validators import Length, InputRequired, DataRequired, NumberRange
+from wtforms.validators import Regexp
+
+class FormWTFAjouterLiaison(FlaskForm):
+    fk_plantes_habitat_wtf = IntegerField("ID Plante", validators=[DataRequired(), NumberRange(min=1, message="Veuillez entrer un ID valide.")])
+    fk_habitat_plantes_wtf = IntegerField("ID Habitat", validators=[DataRequired(), NumberRange(min=1, message="Veuillez entrer un ID valide.")])
+    submit = SubmitField("Ajouter Liaison")
+
+class FormWTFUpdateLiaison(FlaskForm):
+    id_liaison = HiddenField("ID Liaison")  # Champ caché pour l'ID de la liaison
+    fk_plantes_habitat_wtf = IntegerField("ID Plante", validators=[DataRequired(), NumberRange(min=1, message="Veuillez entrer un ID valide.")])
+    fk_habitat_plantes_wtf = IntegerField("ID Habitat", validators=[DataRequired(), NumberRange(min=1, message="Veuillez entrer un ID valide.")])
+    submit = SubmitField("Mettre à jour Liaison")
+
+class FormWTFDeleteLiaison(FlaskForm):
+    fk_plantes_habitat_delete_wtf = IntegerField("ID Plante", render_kw={'readonly': True})
+    fk_habitat_plantes_delete_wtf = IntegerField("ID Habitat", render_kw={'readonly': True})
+    submit_btn_del = SubmitField("Effacer Liaison")
+    submit_btn_annuler = SubmitField("Annuler")

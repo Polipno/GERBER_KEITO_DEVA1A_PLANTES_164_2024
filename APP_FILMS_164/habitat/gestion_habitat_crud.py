@@ -333,6 +333,18 @@ def habitat_delete_wtf():
 
 
 
+
+
+
+from pathlib import Path
+
+from flask import redirect, request, session, url_for, render_template, flash
+
+from APP_FILMS_164 import app
+from APP_FILMS_164.database.database_tools import DBconnection
+from APP_FILMS_164.erreurs.exceptions import *
+from APP_FILMS_164.habitat.gestion_habitat_wtf_forms import FormWTFAjouterLiaison, FormWTFUpdateLiaison, FormWTFDeleteLiaison
+
 @app.route("/plantes_habitat_afficher/<string:order_by>/<int:id_plante_habitat_sel>", methods=['GET', 'POST'])
 def plantes_habitat_afficher(order_by, id_plante_habitat_sel):
     if request.method == "GET":
@@ -340,72 +352,215 @@ def plantes_habitat_afficher(order_by, id_plante_habitat_sel):
             with DBconnection() as mc_afficher:
                 if order_by == "ASC" and id_plante_habitat_sel == 0:
                     strsql_plantes_habitat_afficher = """SELECT 
-    p.*, 
-    h.*
-FROM 
-    t_plantes p
-JOIN 
-    t_plantes_habitat ph ON p.id_plante = ph.FK_plantes_habitat
-JOIN 
-    t_habitat h ON ph.FK_habitat_plantes = h.id_habitat
-ORDER BY 
-    p.id_plante;"""
-                    mc_afficher.execute(strsql_plantes_habitat_afficher )
+                                                            ph.ID_Plantes_Habitat, 
+                                                            p.ID_Plante, 
+                                                            p.Nom_Commun, 
+                                                            p.Nom_Scientifique, 
+                                                            p.Famille, 
+                                                            h.ID_Habitat, 
+                                                            h.Description 
+                                                        FROM 
+                                                            t_plantes p
+                                                        JOIN 
+                                                            t_plantes_habitat ph ON p.ID_Plante = ph.FK_plantes_habitat
+                                                        JOIN 
+                                                            t_habitat h ON ph.FK_habitat_plantes = h.ID_Habitat
+                                                        ORDER BY 
+                                                            ph.ID_Plantes_Habitat ASC;"""
+                    mc_afficher.execute(strsql_plantes_habitat_afficher)
                 elif order_by == "ASC":
-                    # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
-                    # la commande MySql classique est "SELECT * FROM t_habitat"
-                    # Pour "lever"(raise) une erreur s'il y a des erreurs sur les noms d'attributs dans la table
-                    # donc, je précise les champs à afficher
-                    # Constitution d'un dictionnaire pour associer l'id du habitat sélectionné avec un nom de variable
                     valeur_id_habitat_selected_dictionnaire = {"value_id_plante_habitat_selected": id_plante_habitat_sel}
                     strsql_plantes_habitat_afficher = """SELECT 
-    p.*, 
-    h.*
-FROM 
-    t_plantes p
-JOIN 
-    t_plantes_habitat ph ON p.id_plante = ph.FK_plantes_habitat
-JOIN 
-    t_habitat h ON ph.FK_habitat_plantes = h.id_habitat
-ORDER BY 
-    p.id_plante;"""
-
-                    mc_afficher.execute(strsql_plantes_habitat_afficher , valeur_id_habitat_selected_dictionnaire)
+                                                            ph.ID_Plantes_Habitat, 
+                                                            p.ID_Plante, 
+                                                            p.Nom_Commun, 
+                                                            p.Nom_Scientifique, 
+                                                            p.Famille, 
+                                                            h.ID_Habitat, 
+                                                            h.Description 
+                                                        FROM 
+                                                            t_plantes p
+                                                        JOIN 
+                                                            t_plantes_habitat ph ON p.ID_Plante = ph.FK_plantes_habitat
+                                                        JOIN 
+                                                            t_habitat h ON ph.FK_habitat_plantes = h.ID_Habitat
+                                                        WHERE 
+                                                            ph.ID_Plantes_Habitat = %(value_id_plante_habitat_selected)s
+                                                        ORDER BY 
+                                                            ph.ID_Plantes_Habitat ASC;"""
+                    mc_afficher.execute(strsql_plantes_habitat_afficher, valeur_id_habitat_selected_dictionnaire)
                 else:
-                    strsql_habitat_afficher = """SELECT 
-    p.*, 
-    h.*
-FROM 
-    t_plantes p
-JOIN 
-    t_plantes_habitat ph ON p.id_plante = ph.FK_plantes_habitat
-JOIN 
-    t_habitat h ON ph.FK_habitat_plantes = h.id_habitat
-ORDER BY 
-    p.id_plante;"""
-
-                    mc_afficher.execute(strsql_habitat_afficher)
+                    strsql_plantes_habitat_afficher = """SELECT 
+                                                            ph.ID_Plantes_Habitat, 
+                                                            p.ID_Plante, 
+                                                            p.Nom_Commun, 
+                                                            p.Nom_Scientifique, 
+                                                            p.Famille, 
+                                                            h.ID_Habitat, 
+                                                            h.Description 
+                                                        FROM 
+                                                            t_plantes p
+                                                        JOIN 
+                                                            t_plantes_habitat ph ON p.ID_Plante = ph.FK_plantes_habitat
+                                                        JOIN 
+                                                            t_habitat h ON ph.FK_habitat_plantes = h.ID_Habitat
+                                                        ORDER BY 
+                                                            ph.ID_Plantes_Habitat ASC;"""
+                    mc_afficher.execute(strsql_plantes_habitat_afficher)
 
                 data_habitat = mc_afficher.fetchall()
 
-                print("data_habitat ", data_habitat, " Type : ", type(data_habitat))
-
-                # Différencier les messages si la table est vide.
                 if not data_habitat and id_plante_habitat_sel == 0:
-                    flash("""La table "t_habitat" est vide. !!""", "warning")
+                    flash("La table est vide.", "warning")
                 elif not data_habitat and id_plante_habitat_sel > 0:
-                    # Si l'utilisateur change l'id_habitat dans l'URL et que le habitat n'existe pas,
-                    flash(f"Le habitat demandé n'existe pas !!", "warning")
+                    flash("La liaison demandée n'existe pas !!", "warning")
                 else:
-                    # Dans tous les autres cas, c'est que la table "t_habitat" est vide.
-                    # OM 2020.04.09 La ligne ci-dessous permet de donner un sentiment rassurant aux utilisateurs.
-                    flash(f"Données habitat affichés !!", "success")
+                    flash("Données affichées !!", "success")
 
         except Exception as Exception_habitat_afficher:
             raise ExceptionGenresAfficher(f"fichier : {Path(__file__).name}  ;  "
-                                          f"{habitat_afficher.__name__} ; "
+                                          f"{plantes_habitat_afficher.__name__} ; "
                                           f"{Exception_habitat_afficher}")
 
-    # Envoie la page "HTML" au serveur.
     return render_template("habitat/plantes_habitat_afficher.html", data=data_habitat)
 
+
+@app.route("/liaison_ajouter", methods=['GET', 'POST'])
+def liaison_ajouter_wtf():
+    form = FormWTFAjouterLiaison()
+    if request.method == "POST":
+        try:
+            if form.validate_on_submit():
+                fk_plantes_habitat = form.fk_plantes_habitat_wtf.data
+                fk_habitat_plantes = form.fk_habitat_plantes_wtf.data
+
+                valeurs_insertion_dictionnaire = {"fk_plantes_habitat": fk_plantes_habitat, "fk_habitat_plantes": fk_habitat_plantes}
+
+                strsql_insert_liaison = """INSERT INTO t_plantes_habitat (FK_plantes_habitat, FK_habitat_plantes) VALUES (%(fk_plantes_habitat)s, %(fk_habitat_plantes)s);"""
+                with DBconnection() as mconn_bd:
+                    mconn_bd.execute(strsql_insert_liaison, valeurs_insertion_dictionnaire)
+
+                flash("Liaison ajoutée !!", "success")
+                return redirect(url_for('plantes_habitat_afficher', order_by='DESC', id_plante_habitat_sel=0))
+
+        except Exception as Exception_liaison_ajouter_wtf:
+            raise ExceptionGenresAjouterWtf(f"fichier : {Path(__file__).name}  ;  "
+                                            f"{liaison_ajouter_wtf.__name__} ; "
+                                            f"{Exception_liaison_ajouter_wtf}")
+
+    return render_template("habitat/liaison_ajouter_wtf.html", form=form)
+
+@app.route("/liaison_update", methods=['GET', 'POST'])
+def liaison_update_wtf():
+    form_update = FormWTFUpdateLiaison()
+
+    if request.method == "GET":
+        id_liaison_update = request.args.get('id_liaison')
+        if id_liaison_update:
+            # Charger les données existantes pour remplir le formulaire
+            str_sql_liaison = """SELECT ID_Plantes_Habitat, FK_plantes_habitat, FK_habitat_plantes 
+                                 FROM t_plantes_habitat 
+                                 WHERE ID_Plantes_Habitat = %(value_id_liaison)s"""
+            valeur_select_dictionnaire = {"value_id_liaison": id_liaison_update}
+            try:
+                with DBconnection() as mybd_conn:
+                    mybd_conn.execute(str_sql_liaison, valeur_select_dictionnaire)
+                    data_liaison = mybd_conn.fetchone()
+
+                    if data_liaison:
+                        form_update.id_liaison.data = data_liaison["ID_Plantes_Habitat"]
+                        form_update.fk_plantes_habitat_wtf.data = data_liaison["FK_plantes_habitat"]
+                        form_update.fk_habitat_plantes_wtf.data = data_liaison["FK_habitat_plantes"]
+                    else:
+                        flash(f"La liaison avec l'ID {id_liaison_update} n'existe pas.", "danger")
+                        return redirect(url_for('plantes_habitat_afficher', order_by="ASC", id_plante_habitat_sel=0))
+            except Exception as Exception_liaison_update_wtf:
+                raise ExceptionGenreUpdateWtf(
+                    f"fichier : {Path(__file__).name}  ;  "
+                    f"{liaison_update_wtf.__name__} ; "
+                    f"{Exception_liaison_update_wtf}"
+                )
+
+    elif request.method == "POST":
+        id_liaison_update = form_update.id_liaison.data  # Récupérer l'ID depuis le champ caché
+        if not id_liaison_update:
+            flash("Aucun ID de liaison n'a été fourni pour la mise à jour.", "danger")
+            return redirect(url_for('plantes_habitat_afficher', order_by="ASC", id_plante_habitat_sel=0))
+
+        if form_update.validate_on_submit():
+            fk_plantes_habitat = form_update.fk_plantes_habitat_wtf.data
+            fk_habitat_plantes = form_update.fk_habitat_plantes_wtf.data
+
+            valeur_update_dictionnaire = {
+                "ID_Plantes_Habitat": id_liaison_update,
+                "FK_plantes_habitat": fk_plantes_habitat,
+                "FK_habitat_plantes": fk_habitat_plantes
+            }
+
+            str_sql_update_liaison = """UPDATE t_plantes_habitat 
+                                        SET FK_plantes_habitat = %(FK_plantes_habitat)s, FK_habitat_plantes = %(FK_habitat_plantes)s 
+                                        WHERE ID_Plantes_Habitat = %(ID_Plantes_Habitat)s"""
+            try:
+                with DBconnection() as mconn_bd:
+                    mconn_bd.execute(str_sql_update_liaison, valeur_update_dictionnaire)
+                flash("Liaison mise à jour !!", "success")
+                return redirect(url_for('plantes_habitat_afficher', order_by="ASC", id_plante_habitat_sel=id_liaison_update))
+            except Exception as Exception_liaison_update_wtf:
+                raise ExceptionGenreUpdateWtf(
+                    f"fichier : {Path(__file__).name}  ;  "
+                    f"{liaison_update_wtf.__name__} ; "
+                    f"{Exception_liaison_update_wtf}"
+                )
+
+    return render_template("habitat/liaison_update_wtf.html", form_update=form_update, id_liaison=id_liaison_update)
+
+@app.route("/liaison_delete", methods=['GET', 'POST'])
+def liaison_delete_wtf():
+    data_plantes_habitat_delete = None
+    id_liaison_delete = request.values.get('id_liaison')  # Utilisation de request.values.get
+
+    form_delete = FormWTFDeleteLiaison()
+    try:
+        if request.method == "POST" and form_delete.validate_on_submit():
+
+            if form_delete.submit_btn_annuler.data:
+                return redirect(url_for("plantes_habitat_afficher", order_by="ASC", id_plante_habitat_sel=0))
+
+            if form_delete.submit_btn_del.data:
+                valeur_delete_dictionnaire = {"value_id_liaison": id_liaison_delete}
+                str_sql_delete_liaison = """DELETE FROM t_plantes_habitat WHERE ID_Plantes_Habitat = %(value_id_liaison)s"""
+                with DBconnection() as mconn_bd:
+                    mconn_bd.execute(str_sql_delete_liaison, valeur_delete_dictionnaire)
+
+                flash(f"Liaison définitivement effacée !!", "success")
+
+                return redirect(url_for('plantes_habitat_afficher', order_by="ASC", id_plante_habitat_sel=0))
+
+        if request.method == "GET":
+            valeur_select_dictionnaire = {"value_id_liaison": id_liaison_delete}
+
+            str_sql_liaison_delete = """SELECT ID_Plantes_Habitat, FK_plantes_habitat, FK_habitat_plantes 
+                                        FROM t_plantes_habitat 
+                                        WHERE ID_Plantes_Habitat = %(value_id_liaison)s"""
+
+            with DBconnection() as mydb_conn:
+                mydb_conn.execute(str_sql_liaison_delete, valeur_select_dictionnaire)
+                data_liaison = mydb_conn.fetchone()
+
+                if data_liaison:
+                    form_delete.fk_plantes_habitat_delete_wtf.data = data_liaison["FK_plantes_habitat"]
+                    form_delete.fk_habitat_plantes_delete_wtf.data = data_liaison["FK_habitat_plantes"]
+
+                    session['data_plantes_habitat_delete'] = data_liaison
+                else:
+                    flash(f"La liaison avec l'ID {id_liaison_delete} n'existe pas.", "danger")
+                    return redirect(url_for('plantes_habitat_afficher', order_by="ASC", id_plante_habitat_sel=0))
+
+    except Exception as Exception_liaison_delete_wtf:
+        raise ExceptionGenreDeleteWtf(f"fichier : {Path(__file__).name}  ;  "
+                                      f"{liaison_delete_wtf.__name__} ; "
+                                      f"{Exception_liaison_delete_wtf}")
+
+    return render_template("habitat/liaison_delete_wtf.html",
+                           form_delete=form_delete,
+                           data_liaison=data_plantes_habitat_delete)
