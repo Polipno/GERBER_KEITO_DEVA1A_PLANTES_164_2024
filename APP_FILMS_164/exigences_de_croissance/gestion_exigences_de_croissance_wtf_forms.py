@@ -10,6 +10,9 @@ from wtforms.validators import Length, InputRequired, DataRequired
 from wtforms.validators import Regexp
 
 
+
+
+
 class FormWTFAjouterexigences_de_croissance(FlaskForm):
     """
         Dans le formulaire "exigences_de_croissance_ajouter_wtf.html" on impose que le champ soit rempli.
@@ -62,4 +65,29 @@ class FormWTFDeleteexigences_de_croissance(FlaskForm):
     nom_exigences_de_croissance_delete_wtf = StringField("Effacer cette Exigences de croissance")
     submit_btn_del = SubmitField("Effacer Exigences de croissance")
     submit_btn_conf_del = SubmitField("Etes-vous sur d'effacer ?")
+    submit_btn_annuler = SubmitField("Annuler")
+
+
+
+
+class FormWTFAjouterLiaisonPlanteExigence(FlaskForm):
+    id_plante_wtf = StringField("ID Plannte", validators=[DataRequired(message="Le champ ID Plante est requis")])
+    id_exigence_de_croissance_wtf = StringField("ID Exigence de Croissance", validators=[DataRequired(message="Le champ ID Exigence de Croissance est requis")])
+    submit = SubmitField("Ajouter")
+
+
+
+class FormWTFUpdateLiaisonPlanteExigence(FlaskForm):
+    fk_plantes_wtf = StringField("ID Plante", validators=[DataRequired()])
+    fk_exigences_de_croissance_wtf = StringField("ID Exigence de Croissance", validators=[DataRequired()])
+    submit = SubmitField("Mettre à jour")
+
+
+
+
+
+
+class FormWTFDeleteLiaisonPlanteExigence(FlaskForm):
+    id_liaison_wtf = StringField("ID Liaison", validators=[DataRequired()])
+    submit_btn_del = SubmitField("Effacer Liaison")
     submit_btn_annuler = SubmitField("Annuler")

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Ajouter Plante-Exigence de Croissance{% endblock %}
+{% block body %}
+<div class="container mt-5">
+    <h1>Ajouter une Liaison entre Plante et Exigence de Croissance</h1>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+
+            {{ form.id_plante_wtf.label }} {{ form.id_plante_wtf(class="form-control") }}
+        </div>
+        <div class="form-group">
+
+            {{ form.id_exigence_de_croissance_wtf.label }} {{ form.id_exigence_de_croissance_wtf(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+    </form>
+</div>
+{% endblock %}

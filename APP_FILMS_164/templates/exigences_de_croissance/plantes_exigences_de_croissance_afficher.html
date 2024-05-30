@@ -2,98 +2,60 @@
 {% block title %} Afficher plantes_exigences_de_croissance {% endblock %}
 {% block body %}
 <div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<p>
-				plantes_exigences_de_croissance
-			</p>
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                plantes_exigences_de_croissance
+            </p>
             <table class="table table-bordered table-sm">
             {% if data %}
                 <thead>
                     <tr>
-                        <th class="align-middle">
-                            ID_Plante
-                        </th>
-                        <th class="align-middle">
-                            Nom Commun
-                        </th>
-						  <th class="align-middle">
-                            Nom Scientifique
-                        </th>
-						 <th class="align-middle">
-                            Famille
-                        </th>
-                         <th class="align-middle">
-                            ID_Exigence
-                        </th>
-                         <th class="align-middle">
-                            Lumiere
-                        </th>
-                         <th class="align-middle">
-                            Eau
-                        </th>
-                         <th class="align-middle">
-                            Type de sol
-                        </th>
+                        <th class="align-middle">ID Liaison</th>
+                        <th class="align-middle">ID Plante</th>
+                        <th class="align-middle">Nom Commun</th>
+                        <th class="align-middle">Nom Scientifique</th>
+                        <th class="align-middle">Famille</th>
+                        <th class="align-middle">ID Exigence</th>
+                        <th class="align-middle">Lumière</th>
+                        <th class="align-middle">Eau</th>
+                        <th class="align-middle">Type de Sol</th>
+                        <th class="align-middle">Actions</th>
                     </tr>
                 </thead>
             {% endif %}
 
             {% for row in data %}
-				<tbody>
-					<tr>
-						<td class="align-middle">
-							{{ row.ID_Plante}}
-						</td>
-						<td class="align-middle">
-							{{ row.Nom_Commun }}
-						</td>
-						<td class="align-middle">
-							{{ row.Nom_Scientifique }}
-						</td>
-						<td class="align-middle">
-							{{ row.Famille }}
-						</td>
-                        <td class="align-middle">
-							{{ row.ID_Exigence }}
-						</td>
-						<td class="align-middle">
-							{{ row.Lumière }}
-						</td>
-						<td class="align-middle">
-							{{ row.Eau }}
-						</td>
-						<td class="align-middle">
-							{{ row.Type_De_Sol }}
-						</td>
-						<td class="text-center" class="align-middle">
-							<a class="btn btn-primary" href="{{ url_for('exigences_de_croissance_ajouter_wtf') }}" role="button">Ajouter</a>
-						</td>
-						<td class="text-center" class="align-middle">
-							<a class="btn btn-warning" href="{{ url_for('exigences_de_croissance_update_wtf', ID_Exigence_btn_edit_html=row.ID_Exigence) }}" role="button">Edit</a>
-						</td>
-						<td class="text-center" class="align-middle">
-							<a class="btn btn-danger" href="{{ url_for('exigences_de_croissance_delete_wtf', ID_Exigence_btn_delete_html=row.ID_Exigence) }}" role="button">Delete</a>
-						</td>
-
-
-					</tr>
-				</tbody>
+                <tbody>
+                    <tr>
+                        <td class="align-middle">{{ row.ID_Plantes_Exigence_De_Coissance }}</td>
+                        <td class="align-middle">{{ row.ID_Plante }}</td>
+                        <td class="align-middle">{{ row.Nom_Commun }}</td>
+                        <td class="align-middle">{{ row.Nom_Scientifique }}</td>
+                        <td class="align-middle">{{ row.Famille }}</td>
+                        <td class="align-middle">{{ row.ID_Exigence }}</td>
+                        <td class="align-middle">{{ row.Lumière }}</td>
+                        <td class="align-middle">{{ row.Eau }}</td>
+                        <td class="align-middle">{{ row.Type_De_Sol }}</td>
+                        <td class="text-center align-middle">
+                            <a class="btn btn-primary" href="{{ url_for('plantes_exigences_de_croissance_ajouter') }}" role="button">Ajouter</a>
+                            <a class="btn btn-warning" href="{{ url_for('plantes_exigences_de_croissance_update', ID_Plantes_Exigence_De_Coissance_btn_edit_html=row.ID_Plantes_Exigence_De_Coissance) }}" role="button">Edit</a>
+                            <a class="btn btn-danger" href="{{ url_for('plantes_exigences_de_croissance_delete', ID_Plantes_Exigence_De_Coissance_btn_delete_html=row.ID_Plantes_Exigence_De_Coissance) }}" role="button">Delete</a>
+                        </td>
+                    </tr>
+                </tbody>
             {% else %}
-				<tbody>
-					<tr>
-						<td>
-							Aucun exigences_de_croissance.
-						</td>
-						<td>
-							<a class="btn btn-primary" href="{{ url_for('exigences_de_croissance_ajouter_wtf') }}" role="button">Ajouter</a>
-						</td>
-					</tr>
-				</tbody>
+                <tbody>
+                    <tr>
+                        <td colspan="10">Aucune exigence de croissance trouvée.</td>
+                        <td>
+                            <a class="btn btn-primary" href="{{ url_for('plantes_exigences_de_croissance_ajouter') }}" role="button">Ajouter</a>
+                        </td>
+                    </tr>
+                </tbody>
             {% endfor %}
-			</table>
-		</div>
-	</div>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}
-

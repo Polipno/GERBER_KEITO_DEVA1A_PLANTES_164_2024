@@ -12,7 +12,9 @@ from flask import url_for
 from APP_FILMS_164 import app
 from APP_FILMS_164.database.database_tools import DBconnection
 from APP_FILMS_164.erreurs.exceptions import *
-from APP_FILMS_164.exigences_de_croissance.gestion_exigences_de_croissance_wtf_forms import FormWTFAjouterexigences_de_croissance
+from APP_FILMS_164.exigences_de_croissance.gestion_exigences_de_croissance_wtf_forms import \
+    FormWTFAjouterexigences_de_croissance, FormWTFUpdateLiaisonPlanteExigence, FormWTFDeleteLiaisonPlanteExigence, \
+    FormWTFAjouterLiaisonPlanteExigence
 from APP_FILMS_164.exigences_de_croissance.gestion_exigences_de_croissance_wtf_forms import FormWTFDeleteexigences_de_croissance
 from APP_FILMS_164.exigences_de_croissance.gestion_exigences_de_croissance_wtf_forms import FormWTFUpdateexigences_de_croissance
 
@@ -306,9 +308,6 @@ def exigences_de_croissance_delete_wtf():
                            data_films_associes=data_films_attribue_exigences_de_croissance_delete)
 
 
-
-
-
 @app.route("/plantes_exigences_de_croissance_afficher/<string:order_by>/<int:id_plante_exigences_de_croissance_sel>", methods=['GET', 'POST'])
 def plantes_exigences_de_croissance_afficher(order_by, id_plante_exigences_de_croissance_sel):
     if request.method == "GET":
@@ -316,49 +315,47 @@ def plantes_exigences_de_croissance_afficher(order_by, id_plante_exigences_de_cr
             with DBconnection() as mc_afficher:
                 if order_by == "ASC" and id_plante_exigences_de_croissance_sel == 0:
                     strsql_plantes_exigences_de_croissance_afficher = """SELECT 
-    p.*, 
-    e.*
+    pe.ID_Plantes_Exigence_De_Coissance,
+    p.ID_Plante, p.Nom_Commun, p.Nom_Scientifique, p.Famille,
+    e.ID_Exigence, e.Lumière, e.Eau, e.Type_De_Sol
 FROM 
     t_plantes p
 JOIN 
-    t_plantes_exigence_de_croissance pe ON p.id_plante = pe.FK_plantes_Exigence
+    t_plantes_exigence_de_croissance pe ON p.ID_Plante = pe.FK_Plantes_Exigence
 JOIN 
-    t_exigences_de_croissance e ON pe.FK_Exigence_plantes = e.id_Exigence
+    t_exigences_de_croissance e ON pe.FK_Exigence_Plantes = e.ID_Exigence
 ORDER BY 
-    p.id_plante;"""
+    pe.ID_Plantes_Exigence_De_Coissance ASC;"""
                     mc_afficher.execute(strsql_plantes_exigences_de_croissance_afficher)
                 elif order_by == "ASC":
-                    # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
-                    # la commande MySql classique est "SELECT * FROM t_exigences_de_croissance"
-                    # Pour "lever"(raise) une erreur s'il y a des erreurs sur les noms d'attributs dans la table
-                    # donc, je précise les champs à afficher
-                    # Constitution d'un dictionnaire pour associer l'id du exigences_de_croissance sélectionné avec un nom de variable
                     valeur_ID_Exigence_selected_dictionnaire = {"value_ID_Exigence_selected": id_plante_exigences_de_croissance_sel}
                     strsql_plantes_exigences_de_croissance_afficher = """SELECT 
-    p.*, 
-    e.*
+    pe.ID_Plantes_Exigence_De_Coissance,
+    p.ID_Plante, p.Nom_Commun, p.Nom_Scientifique, p.Famille,
+    e.ID_Exigence, e.Lumière, e.Eau, e.Type_De_Sol
 FROM 
     t_plantes p
 JOIN 
-    t_plantes_exigence_de_croissance pe ON p.id_plante = pe.FK_plantes_Exigence
+    t_plantes_exigence_de_croissance pe ON p.ID_Plante = pe.FK_Plantes_Exigence
 JOIN 
-    t_exigences_de_croissance e ON pe.FK_Exigence_plantes = e.id_Exigence
+    t_exigences_de_croissance e ON pe.FK_Exigence_Plantes = e.ID_Exigence
 ORDER BY 
-    p.id_plante;"""
+    pe.ID_Plantes_Exigence_De_Coissance ASC;"""
 
                     mc_afficher.execute(strsql_plantes_exigences_de_croissance_afficher, valeur_ID_Exigence_selected_dictionnaire)
                 else:
                     strsql_plantes_exigences_de_croissance_afficher = """SELECT 
-    p.*, 
-    e.*
+    pe.ID_Plantes_Exigence_De_Coissance,
+    p.ID_Plante, p.Nom_Commun, p.Nom_Scientifique, p.Famille,
+    e.ID_Exigence, e.Lumière, e.Eau, e.Type_De_Sol
 FROM 
     t_plantes p
 JOIN 
-    t_plantes_exigence_de_croissance pe ON p.id_plante = pe.FK_plantes_Exigence
+    t_plantes_exigence_de_croissance pe ON p.ID_Plante = pe.FK_Plantes_Exigence
 JOIN 
-    t_exigences_de_croissance e ON pe.FK_Exigence_plantes = e.id_Exigence
+    t_exigences_de_croissance e ON pe.FK_Exigence_Plantes = e.ID_Exigence
 ORDER BY 
-    p.id_plante;"""
+    pe.ID_Plantes_Exigence_De_Coissance ASC;"""
 
                     mc_afficher.execute(strsql_plantes_exigences_de_croissance_afficher)
 
@@ -366,21 +363,158 @@ ORDER BY
 
                 print("data_exigences_de_croissance ", data_exigences_de_croissance, " Type : ", type(data_exigences_de_croissance))
 
-                # Différencier les messages si la table est vide.
                 if not data_exigences_de_croissance and id_plante_exigences_de_croissance_sel == 0:
                     flash("""La table "t_exigences_de_croissance" est vide. !!""", "warning")
                 elif not data_exigences_de_croissance and id_plante_exigences_de_croissance_sel > 0:
-                    # Si l'utilisateur change l'ID_Exigence dans l'URL et que le exigences_de_croissance n'existe pas,
                     flash(f"Le exigences_de_croissance demandé n'existe pas !!", "warning")
                 else:
-                    # Dans tous les autres cas, c'est que la table "t_exigences_de_croissance" est vide.
-                    # OM 2020.04.09 La ligne ci-dessous permet de donner un sentiment rassurant aux utilisateurs.
-                    flash(f"Données exigences_de_croissance affichés !!", "success")
+                    flash(f"Données exigences_de_croissance affichées !!", "success")
 
         except Exception as Exception_exigences_de_croissance_afficher:
             raise ExceptionGenresAfficher(f"fichier : {Path(__file__).name}  ;  "
                                           f"{exigences_de_croissance_afficher.__name__} ; "
                                           f"{Exception_exigences_de_croissance_afficher}")
 
-    # Envoie la page "HTML" au serveur.
     return render_template("exigences_de_croissance/plantes_exigences_de_croissance_afficher.html", data=data_exigences_de_croissance)
+
+@app.route("/plantes_exigences_de_croissance_ajouter", methods=['GET', 'POST'])
+def plantes_exigences_de_croissance_ajouter():
+    form = FormWTFAjouterLiaisonPlanteExigence()
+    if request.method == "POST":
+        print("Form data received:", form.data)
+        if form.validate_on_submit():
+            id_plante = form.id_plante_wtf.data
+            id_exigence = form.id_exigence_de_croissance_wtf.data
+
+            # Vérification des valeurs
+            print(f"id_plante: {id_plante}, id_exigence: {id_exigence}")
+
+            valeurs_insertion_dictionnaire = {"FK_plantes_Exigence": id_plante, "FK_Exigence_plantes": id_exigence}
+            strsql_insert_liaison = """INSERT INTO t_plantes_exigence_de_croissance (FK_plantes_Exigence, FK_Exigence_plantes) 
+                                       VALUES (%(FK_plantes_Exigence)s, %(FK_Exigence_plantes)s)"""
+            try:
+                with DBconnection() as mconn_bd:
+                    mconn_bd.execute(strsql_insert_liaison, valeurs_insertion_dictionnaire)
+                flash("Liaison ajoutée avec succès !!", "success")
+                return redirect(url_for('plantes_exigences_de_croissance_afficher', order_by='ASC', id_plante_exigences_de_croissance_sel=0))
+            except Exception as e:
+                flash(f"Erreur lors de l'ajout de la liaison: {str(e)}", "danger")
+        else:
+            flash("Formulaire non validé. Vérifiez les champs.", "warning")
+            print(form.errors)  # Affiche les erreurs de validation
+    return render_template("exigences_de_croissance/plantes_exigences_de_croissance_ajouter_wtf.html", form=form)
+
+@app.route("/plantes_exigences_de_croissance_update", methods=['GET', 'POST'])
+def plantes_exigences_de_croissance_update():
+    try:
+        ID_Plantes_Exigence_De_Coissance_update = request.args.get('ID_Plantes_Exigence_De_Coissance_btn_edit_html')
+        print("ID_Plantes_Exigence_De_Coissance_update:", ID_Plantes_Exigence_De_Coissance_update)
+
+        if ID_Plantes_Exigence_De_Coissance_update is None:
+            flash("Erreur : l'identifiant de la liaison n'a pas été fourni.", "danger")
+            return redirect(url_for('plantes_exigences_de_croissance_afficher', order_by="ASC", id_plante_exigences_de_croissance_sel=0))
+
+        form_update = FormWTFUpdateLiaisonPlanteExigence()
+
+        if request.method == "POST" and form_update.validate_on_submit():
+            id_plante_update = form_update.fk_plantes_wtf.data
+            id_exigence_update = form_update.fk_exigences_de_croissance_wtf.data
+
+            valeur_update_dictionnaire = {
+                "ID_Plantes_Exigence_De_Coissance": ID_Plantes_Exigence_De_Coissance_update,
+                "FK_Plantes_Exigence": id_plante_update,
+                "FK_Exigence_Plantes": id_exigence_update
+            }
+            print("valeur_update_dictionnaire:", valeur_update_dictionnaire)
+
+            str_sql_update_liaison = """UPDATE t_plantes_exigence_de_croissance SET FK_Plantes_Exigence = %(FK_Plantes_Exigence)s, 
+                                          FK_Exigence_Plantes = %(FK_Exigence_Plantes)s 
+                                          WHERE ID_Plantes_Exigence_De_Coissance = %(ID_Plantes_Exigence_De_Coissance)s"""
+            with DBconnection() as mconn_bd:
+                mconn_bd.execute(str_sql_update_liaison, valeur_update_dictionnaire)
+
+            flash(f"Liaison mise à jour !!", "success")
+            return redirect(url_for('plantes_exigences_de_croissance_afficher', order_by="ASC", id_plante_exigences_de_croissance_sel=0))
+
+        elif request.method == "GET":
+            valeur_select_dictionnaire = {"ID_Plantes_Exigence_De_Coissance": ID_Plantes_Exigence_De_Coissance_update}
+            str_sql_ID_liaison = """SELECT ID_Plantes_Exigence_De_Coissance, FK_Plantes_Exigence, FK_Exigence_Plantes 
+                                    FROM t_plantes_exigence_de_croissance 
+                                    WHERE ID_Plantes_Exigence_De_Coissance = %(ID_Plantes_Exigence_De_Coissance)s"""
+            with DBconnection() as mydb_conn:
+                mydb_conn.execute(str_sql_ID_liaison, valeur_select_dictionnaire)
+                data_liaison = mydb_conn.fetchone()
+
+                print("data_liaison:", data_liaison)
+
+                if data_liaison is None:
+                    flash("Erreur : Liaison non trouvée.", "danger")
+                    return redirect(url_for('plantes_exigences_de_croissance_afficher', order_by="ASC", id_plante_exigences_de_croissance_sel=0))
+
+                form_update.fk_plantes_wtf.data = data_liaison["FK_Plantes_Exigence"]
+                form_update.fk_exigences_de_croissance_wtf.data = data_liaison["FK_Exigence_Plantes"]
+
+    except Exception as e:
+        flash(f"Erreur lors de la mise à jour de la liaison : {str(e)}", "danger")
+        print(e)
+
+    return render_template("exigences_de_croissance/plantes_exigences_de_croissance_update_wtf.html", form_update=form_update)
+
+
+@app.route("/plantes_exigences_de_croissance_delete", methods=['GET', 'POST'])
+def plantes_exigences_de_croissance_delete():
+    data_liaison_delete = None
+    try:
+        # Récupération de la valeur de "ID_Plantes_Exigence_De_Coissance" du formulaire HTML
+        ID_Plantes_Exigence_De_Coissance_delete = request.values['ID_Plantes_Exigence_De_Coissance_btn_delete_html']
+
+        # Si l'ID de la liaison n'est pas fourni, afficher un message d'erreur
+        if ID_Plantes_Exigence_De_Coissance_delete is None:
+            flash("Erreur : l'identifiant de la liaison n'a pas été fourni.", "danger")
+            return redirect(url_for('plantes_exigences_de_croissance_afficher', order_by="ASC",
+                                    id_plante_exigences_de_croissance_sel=0))
+
+        # Objet formulaire pour effacer la liaison
+        form_delete = FormWTFDeleteLiaisonPlanteExigence()
+
+        if request.method == "POST" and form_delete.validate_on_submit():
+            if form_delete.submit_btn_annuler.data:
+                return redirect(url_for("plantes_exigences_de_croissance_afficher", order_by="ASC",
+                                        id_plante_exigences_de_croissance_sel=0))
+
+            if form_delete.submit_btn_del.data:
+                valeur_delete_dictionnaire = {
+                    "ID_Plantes_Exigence_De_Coissance": ID_Plantes_Exigence_De_Coissance_delete}
+
+                str_sql_delete_liaison = """DELETE FROM t_plantes_exigence_de_croissance WHERE ID_Plantes_Exigence_De_Coissance = %(ID_Plantes_Exigence_De_Coissance)s"""
+                with DBconnection() as mconn_bd:
+                    mconn_bd.execute(str_sql_delete_liaison, valeur_delete_dictionnaire)
+
+                flash(f"Liaison définitivement effacée !!", "success")
+                return redirect(url_for('plantes_exigences_de_croissance_afficher', order_by="ASC",
+                                        id_plante_exigences_de_croissance_sel=0))
+
+        if request.method == "GET":
+            valeur_select_dictionnaire = {"ID_Plantes_Exigence_De_Coissance": ID_Plantes_Exigence_De_Coissance_delete}
+
+            str_sql_select_liaison = """SELECT ID_Plantes_Exigence_De_Coissance, FK_Plantes_Exigence, FK_Exigence_Plantes 
+                                        FROM t_plantes_exigence_de_croissance 
+                                        WHERE ID_Plantes_Exigence_De_Coissance = %(ID_Plantes_Exigence_De_Coissance)s"""
+            with DBconnection() as mydb_conn:
+                mydb_conn.execute(str_sql_select_liaison, valeur_select_dictionnaire)
+                data_liaison = mydb_conn.fetchone()
+
+                session['data_liaison_delete'] = data_liaison
+
+            form_delete.id_liaison_wtf.data = data_liaison["ID_Plantes_Exigence_De_Coissance"]
+
+    except KeyError as key_error:
+        flash(f"Erreur : clé {key_error} non trouvée dans la requête.", "danger")
+        return redirect(url_for('plantes_exigences_de_croissance_afficher', order_by="ASC",
+                                id_plante_exigences_de_croissance_sel=0))
+    except Exception as e:
+        flash(f"Erreur lors de la suppression de la liaison : {str(e)}", "danger")
+        print(e)
+
+    return render_template("exigences_de_croissance/plantes_exigences_de_croissance_delete_wtf.html",
+                           form_delete=form_delete)

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %} Supprimer Liaison Plante-Exigence {% endblock %}
+{% block body %}
+<div class="container mt-5">
+    <h1>Supprimer la Liaison entre Plante et Exigence de Croissance</h1>
+    <form method="post">
+        {{ form_delete.hidden_tag() }}
+        <div class="form-group">
+            {{ form_delete.id_liaison_wtf.label }} {{ form_delete.id_liaison_wtf(class="form-control", readonly=true) }}
+        </div>
+        <div class="form-group">
+            {{ form_delete.submit_btn_del(class="btn btn-danger") }}
+            {{ form_delete.submit_btn_annuler(class="btn btn-secondary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}
