@@ -123,6 +123,13 @@ class ExceptionInitAppFilms164(Base):
     pass
 
 
+class ExceptionPlanteUtilisationModifier(Base):
+    def __init__(self, message):
+        super().__init__(message)
+        self.message = message
+
+
+
 """
     Grâce à la méthode "flash" cela permet de "raise" (remonter) les erreurs "try...execpt" dans la page "home.html"
 """

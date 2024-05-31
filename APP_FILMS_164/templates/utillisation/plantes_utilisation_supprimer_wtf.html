@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %} Supprimer Plantes Utilisation {% endblock %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Supprimer Plantes Utilisation</h1>
+            <form method="POST">
+                <div class="form-group">
+                    <label for="nom_plante_utilisation_delete_wtf">ID Plantes Utilisation</label>
+                    <input type="text" class="form-control" id="nom_plante_utilisation_delete_wtf" name="nom_plante_utilisation_delete_wtf" value="{{ form_delete.nom_plante_utilisation_delete_wtf.data }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Êtes-vous sûr de vouloir supprimer cette association?</label>
+                </div>
+                <div class="form-group">
+                    {{ form_delete.hidden_tag() }}
+                    {{ form_delete.submit_btn_conf_del(class="btn btn-danger") }}
+                    {{ form_delete.submit_btn_annuler(class="btn btn-secondary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

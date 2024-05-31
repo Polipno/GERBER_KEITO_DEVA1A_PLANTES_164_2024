@@ -12,7 +12,8 @@ from flask import url_for
 from APP_FILMS_164 import app
 from APP_FILMS_164.database.database_tools import DBconnection
 from APP_FILMS_164.erreurs.exceptions import *
-from APP_FILMS_164.utillisation.gestion_utillisation_wtf_forms import FormWTFAjouterutillisation
+from APP_FILMS_164.utillisation.gestion_utillisation_wtf_forms import FormWTFAjouterutillisation, \
+    FormWTFDeletePlanteUtilisation, FormWTFUpdatePlanteUtilisation, FormWTFAjouterPlanteUtilisation
 from APP_FILMS_164.utillisation.gestion_utillisation_wtf_forms import FormWTFDeleteutillisation
 from APP_FILMS_164.utillisation.gestion_utillisation_wtf_forms import FormWTFUpdateutillisation
 
@@ -305,74 +306,189 @@ def plantes_utillisation_afficher(order_by, ID_Plante_Utillisation_sel):
         try:
             with DBconnection() as mc_afficher:
                 if order_by == "ASC" and ID_Plante_Utillisation_sel == 0:
-                    strsql_plantes_utillisation_afficher = """SELECT 
-    p.*, 
-    u.*
-FROM 
-    t_plantes p
-JOIN 
-    t_plantes_utilisation pu ON p.id_plante = pu.FK_plantes_Utilisation
-JOIN 
-    t_utillisation u ON pu.FK_Utilisation_plantes = u.id_utillisation
-ORDER BY 
-    p.id_plante;"""
+                    strsql_plantes_utillisation_afficher = """
+                        SELECT p.ID_Plante, p.Nom_Commun, p.Nom_Scientifique, p.Famille, 
+                               u.ID_Utillisation, u.Description_Utilisation, pu.ID_Plantes_Utilisation
+                        FROM t_plantes p
+                        JOIN t_plantes_utilisation pu ON p.ID_Plante = pu.FK_Plantes_Utilisation
+                        JOIN t_utillisation u ON pu.FK_Utilisation_Plantes = u.ID_Utillisation
+                        ORDER BY pu.ID_Plantes_Utilisation ASC
+                    """
                     mc_afficher.execute(strsql_plantes_utillisation_afficher)
                 elif order_by == "ASC":
-                    # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
-                    # la commande MySql classique est "SELECT * FROM t_utillisation"
-                    # Pour "lever"(raise) une erreur s'il y a des erreurs sur les noms d'attributs dans la table
-                    # donc, je précise les champs à afficher
-                    # Constitution d'un dictionnaire pour associer l'id du utillisation sélectionné avec un nom de variable
                     valeur_ID_Utillisation_selected_dictionnaire = {"value_ID_Utillisation_selected": ID_Plante_Utillisation_sel}
-                    strsql_plantes_utillisation_afficher = """SELECT 
-    p.*, 
-    u.*
-FROM 
-    t_plantes p
-JOIN 
-    t_plantes_utilisation pu ON p.id_plante = pu.FK_plantes_Utilisation
-JOIN 
-    t_utillisation u ON pu.FK_Utilisation_plantes = u.id_utillisation
-ORDER BY 
-    p.id_plante;"""
-
+                    strsql_plantes_utillisation_afficher = """
+                        SELECT p.ID_Plante, p.Nom_Commun, p.Nom_Scientifique, p.Famille, 
+                               u.ID_Utillisation, u.Description_Utilisation, pu.ID_Plantes_Utilisation
+                        FROM t_plantes p
+                        JOIN t_plantes_utilisation pu ON p.ID_Plante = pu.FK_Plantes_Utilisation
+                        JOIN t_utillisation u ON pu.FK_Utilisation_Plantes = u.ID_Utillisation
+                        WHERE pu.ID_Plantes_Utilisation = %(value_ID_Utillisation_selected)s
+                        ORDER BY pu.ID_Plantes_Utilisation ASC
+                    """
                     mc_afficher.execute(strsql_plantes_utillisation_afficher, valeur_ID_Utillisation_selected_dictionnaire)
                 else:
-                    strsql_plantes_utillisation_afficher = """SELECT 
-    p.*, 
-    u.*
-FROM 
-    t_plantes p
-JOIN 
-    t_plantes_utilisation pu ON p.id_plante = pu.FK_plantes_Utilisation
-JOIN 
-    t_utillisation u ON pu.FK_Utilisation_plantes = u.id_utillisation
-ORDER BY 
-    p.id_plante;"""
-
+                    strsql_plantes_utillisation_afficher = """
+                        SELECT p.ID_Plante, p.Nom_Commun, p.Nom_Scientifique, p.Famille, 
+                               u.ID_Utillisation, u.Description_Utilisation, pu.ID_Plantes_Utilisation
+                        FROM t_plantes p
+                        JOIN t_plantes_utilisation pu ON p.ID_Plante = pu.FK_Plantes_Utilisation
+                        JOIN t_utillisation u ON pu.FK_Utilisation_Plantes = u.ID_Utillisation
+                        ORDER BY pu.ID_Plantes_Utilisation ASC
+                    """
                     mc_afficher.execute(strsql_plantes_utillisation_afficher)
 
                 data_utillisation = mc_afficher.fetchall()
 
-                print("data_utillisation ", data_utillisation, " Type : ", type(data_utillisation))
-
-                # Différencier les messages si la table est vide.
                 if not data_utillisation and ID_Plante_Utillisation_sel == 0:
                     flash("""La table "t_utillisation" est vide. !!""", "warning")
                 elif not data_utillisation and ID_Plante_Utillisation_sel > 0:
-                    # Si l'utilisateur change l'ID_Utillisation dans l'URL et que le utillisation n'existe pas,
                     flash(f"Le utillisation demandé n'existe pas !!", "warning")
                 else:
-                    # Dans tous les autres cas, c'est que la table "t_utillisation" est vide.
-                    # OM 2020.04.09 La ligne ci-dessous permet de donner un sentiment rassurant aux utilisateurs.
-                    flash(f"Données utillisation affichés !!", "success")
+                    flash(f"Données utillisation affichées !!", "success")
 
         except Exception as Exception_utillisation_afficher:
             raise ExceptionGenresAfficher(f"fichier : {Path(__file__).name}  ;  "
                                           f"{utillisation_afficher.__name__} ; "
                                           f"{Exception_utillisation_afficher}")
 
-    # Envoie la page "HTML" au serveur.
     return render_template("utillisation/plantes_utillisation_afficher.html", data=data_utillisation)
 
+class ExceptionPlanteUtilisationAjouter(Exception):
+    pass
 
+
+@app.route("/plantes_utillisation_ajouter", methods=['GET', 'POST'])
+def plantes_utillisation_ajouter_wtf():
+    form = FormWTFAjouterPlanteUtilisation()
+    if request.method == "POST":
+        try:
+            if form.validate_on_submit():
+                id_plante = form.id_plante_wtf.data
+                id_utillisation = form.id_utilisation_wtf.data
+                valeurs_insertion_dictionnaire = {
+                    "FK_Plantes_Utilisation": id_plante,
+                    "FK_Utilisation_Plantes": id_utillisation
+                }
+                strsql_insert_association = """INSERT INTO t_plantes_utilisation 
+                                                (FK_Plantes_Utilisation, FK_Utilisation_Plantes) 
+                                                VALUES (%(FK_Plantes_Utilisation)s, %(FK_Utilisation_Plantes)s)"""
+                with DBconnection() as mconn_bd:
+                    mconn_bd.execute(strsql_insert_association, valeurs_insertion_dictionnaire)
+
+                flash(f"Association ajoutée avec succès !!", "success")
+                return redirect(url_for('plantes_utillisation_afficher', order_by='ASC', ID_Plante_Utillisation_sel=0))
+
+        except Exception as Exception_ajouter_association:
+            raise ExceptionPlanteUtilisationAjouter(f"fichier : {Path(__file__).name}  ;  "
+                                                    f"{plantes_utillisation_ajouter_wtf.__name__} ; "
+                                                    f"{str(Exception_ajouter_association)}")
+
+    return render_template("utillisation/plantes_utilisation_ajouter_wtf.html", form=form)
+
+class ExceptionPlanteUtilisationModifier(Exception):
+    pass
+
+
+@app.route("/plantes_utillisation_modifier", methods=['GET', 'POST'])
+def plantes_utillisation_modifier_wtf():
+    try:
+        id_plante_utilisation_update = request.args.get('ID_Plantes_Utilisation_btn_edit_html', None)
+        if id_plante_utilisation_update is None:
+            raise KeyError("ID_Plantes_Utilisation_btn_edit_html")
+
+        form_update = FormWTFUpdatePlanteUtilisation()
+
+        if request.method == "POST" and form_update.validate_on_submit():
+            id_plante = form_update.id_plante_update_wtf.data
+            id_utilisation = form_update.id_utilisation_update_wtf.data
+            valeur_update_dictionnaire = {
+                "ID_Plantes_Utilisation": id_plante_utilisation_update,
+                "FK_Plantes_Utilisation": id_plante,
+                "FK_Utilisation_Plantes": id_utilisation
+            }
+            str_sql_update_association = """
+                UPDATE t_plantes_utilisation 
+                SET FK_Plantes_Utilisation = %(FK_Plantes_Utilisation)s, 
+                    FK_Utilisation_Plantes = %(FK_Utilisation_Plantes)s 
+                WHERE ID_Plantes_Utilisation = %(ID_Plantes_Utilisation)s
+            """
+            with DBconnection() as mconn_bd:
+                mconn_bd.execute(str_sql_update_association, valeur_update_dictionnaire)
+
+            flash("Association mise à jour avec succès !!", "success")
+            return redirect(url_for('plantes_utillisation_afficher', order_by="ASC", ID_Plante_Utillisation_sel=id_plante_utilisation_update))
+
+        elif request.method == "GET":
+            str_sql_id_association = """
+                SELECT * FROM t_plantes_utilisation 
+                WHERE ID_Plantes_Utilisation = %(ID_Plantes_Utilisation)s
+            """
+            valeur_select_dictionnaire = {"ID_Plantes_Utilisation": id_plante_utilisation_update}
+            with DBconnection() as mybd_conn:
+                mybd_conn.execute(str_sql_id_association, valeur_select_dictionnaire)
+                data_association = mybd_conn.fetchone()
+                if data_association:
+                    form_update.id_plante_update_wtf.data = data_association["FK_Plantes_Utilisation"]
+                    form_update.id_utilisation_update_wtf.data = data_association["FK_Utilisation_Plantes"]
+                else:
+                    flash("Liaison non trouvée.", "danger")
+                    return redirect(url_for('plantes_utillisation_afficher', order_by="ASC", ID_Plante_Utillisation_sel=0))
+
+    except KeyError as e:
+        flash(f"Erreur : {str(e)}. Clé non trouvée dans la requête.", "danger")
+        return redirect(url_for('plantes_utillisation_afficher', order_by="ASC", ID_Plante_Utillisation_sel=0))
+    except Exception as e:
+        raise ExceptionPlanteUtilisationModifier(f"fichier : {Path(__file__).name}  ;  "
+                                                 f"{plantes_utillisation_modifier_wtf.__name__} ; "
+                                                 f"{str(e)}")
+
+    return render_template("utillisation/plantes_utilisation_modifier_wtf.html", form_update=form_update)
+
+class ExceptionPlanteUtilisationSupprimer(Exception):
+    pass
+
+
+@app.route("/plantes_utillisation_supprimer", methods=['GET', 'POST'])
+def plantes_utillisation_supprimer_wtf():
+    form_delete = FormWTFDeletePlanteUtilisation()
+    try:
+        # Récupère l'ID de l'URL (GET) ou du formulaire (POST)
+        id_plante_utilisation_delete = request.values.get('ID_Plantes_Utilisation_btn_delete_html', None)
+        if id_plante_utilisation_delete is None:
+            raise KeyError("ID_Plantes_Utilisation_btn_delete_html")
+
+        if request.method == "POST" and form_delete.validate_on_submit():
+            if form_delete.submit_btn_conf_del.data:
+                valeur_delete_dictionnaire = {"value_ID_Plantes_Utilisation": id_plante_utilisation_delete}
+                str_sql_delete_association = """DELETE FROM t_plantes_utilisation 
+                                                WHERE ID_Plantes_Utilisation = %(value_ID_Plantes_Utilisation)s"""
+                with DBconnection() as mconn_bd:
+                    mconn_bd.execute(str_sql_delete_association, valeur_delete_dictionnaire)
+
+                flash(f"Association supprimée avec succès !!", "success")
+                return redirect(url_for('plantes_utillisation_afficher', order_by="ASC", ID_Plante_Utillisation_sel=0))
+
+        if request.method == "GET":
+            valeur_select_dictionnaire = {"value_ID_Plantes_Utilisation": id_plante_utilisation_delete}
+            str_sql_select_association = """SELECT ID_Plantes_Utilisation, FK_Plantes_Utilisation, FK_Utilisation_Plantes FROM t_plantes_utilisation 
+                                            WHERE ID_Plantes_Utilisation = %(value_ID_Plantes_Utilisation)s"""
+            with DBconnection() as mydb_conn:
+                mydb_conn.execute(str_sql_select_association, valeur_select_dictionnaire)
+                data_association = mydb_conn.fetchone()
+                if data_association:
+                    form_delete.nom_plante_utilisation_delete_wtf.data = f"{data_association['ID_Plantes_Utilisation']}"
+                else:
+                    flash("Liaison non trouvée.", "danger")
+                    return redirect(url_for('plantes_utillisation_afficher', order_by="ASC", ID_Plante_Utillisation_sel=0))
+
+    except KeyError as e:
+        flash(f"Erreur : '{str(e)}'. Clé non trouvée dans la requête.", "danger")
+        return redirect(url_for('plantes_utillisation_afficher', order_by="ASC", ID_Plante_Utillisation_sel=0))
+    except Exception as e:
+        raise ExceptionPlanteUtilisationSupprimer(f"fichier : {Path(__file__).name}  ;  "
+                                                  f"{plantes_utillisation_supprimer_wtf.__name__} ; "
+                                                  f"{str(e)}")
+
+    return render_template("utillisation/plantes_utilisation_supprimer_wtf.html",
+                           form_delete=form_delete)

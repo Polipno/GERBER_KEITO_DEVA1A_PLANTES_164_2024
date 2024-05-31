@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Ajouter Plante Utilisation{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Ajouter une nouvelle association Plante - Utilisation</h1>
+    <form method="post" action="{{ url_for('plantes_utillisation_ajouter_wtf') }}">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label for="id_plante_wtf">ID Plante</label>
+            {{ form.id_plante_wtf(class="form-control") }}
+        </div>
+        <div class="form-group">
+            <label for="id_utilisation_wtf">ID Utilisation</label>
+            {{ form.id_utilisation_wtf(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

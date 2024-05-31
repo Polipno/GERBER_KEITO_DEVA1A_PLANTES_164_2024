@@ -49,3 +49,30 @@ class FormWTFDeleteutillisation(FlaskForm):
     submit_btn_del = SubmitField("Effacer Utillisation")
     submit_btn_conf_del = SubmitField("Etes-vous sur d'effacer ?")
     submit_btn_annuler = SubmitField("Annuler")
+
+
+
+
+class FormWTFAjouterPlanteUtilisation(FlaskForm):
+    id_plante_wtf = StringField("ID Plante", validators=[DataRequired()])
+    id_utilisation_wtf = StringField("ID Utilisation", validators=[DataRequired()])
+    submit = SubmitField("Ajouter")
+
+
+
+
+class FormWTFUpdatePlanteUtilisation(FlaskForm):
+    id_plante_update_wtf = StringField("ID de la plante", validators=[DataRequired()])
+    id_utilisation_update_wtf = StringField("ID de l'utilisation", validators=[DataRequired()])
+    submit = SubmitField("Mettre à jour")
+
+
+
+
+
+
+class FormWTFDeletePlanteUtilisation(FlaskForm):
+    nom_plante_utilisation_delete_wtf = StringField("Effacer cette association", render_kw={'readonly': True})
+    submit_btn_del = SubmitField("Effacer association")
+    submit_btn_conf_del = SubmitField("Effacer association")
+    submit_btn_annuler = SubmitField("Annuler")
