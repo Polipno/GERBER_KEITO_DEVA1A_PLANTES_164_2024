@@ -451,14 +451,13 @@ class ExceptionPlanteUtilisationSupprimer(Exception):
 
 @app.route("/plantes_utillisation_supprimer", methods=['GET', 'POST'])
 def plantes_utillisation_supprimer_wtf():
+    id_plante_utilisation_delete = request.values.get('ID_Plantes_Utilisation_btn_delete_html')
     form_delete = FormWTFDeletePlanteUtilisation()
     try:
-        # Récupère l'ID de l'URL (GET) ou du formulaire (POST)
-        id_plante_utilisation_delete = request.values.get('ID_Plantes_Utilisation_btn_delete_html', None)
-        if id_plante_utilisation_delete is None:
-            raise KeyError("ID_Plantes_Utilisation_btn_delete_html")
+        if request.method == "POST":
+            if form_delete.submit_btn_annuler.data:
+                return redirect(url_for('plantes_utillisation_afficher', order_by='ASC', ID_Plante_Utillisation_sel=0))
 
-        if request.method == "POST" and form_delete.validate_on_submit():
             if form_delete.submit_btn_conf_del.data:
                 valeur_delete_dictionnaire = {"value_ID_Plantes_Utilisation": id_plante_utilisation_delete}
                 str_sql_delete_association = """DELETE FROM t_plantes_utilisation 
@@ -471,20 +470,13 @@ def plantes_utillisation_supprimer_wtf():
 
         if request.method == "GET":
             valeur_select_dictionnaire = {"value_ID_Plantes_Utilisation": id_plante_utilisation_delete}
-            str_sql_select_association = """SELECT ID_Plantes_Utilisation, FK_Plantes_Utilisation, FK_Utilisation_Plantes FROM t_plantes_utilisation 
+            str_sql_select_association = """SELECT * FROM t_plantes_utilisation 
                                             WHERE ID_Plantes_Utilisation = %(value_ID_Plantes_Utilisation)s"""
             with DBconnection() as mydb_conn:
                 mydb_conn.execute(str_sql_select_association, valeur_select_dictionnaire)
                 data_association = mydb_conn.fetchone()
-                if data_association:
-                    form_delete.nom_plante_utilisation_delete_wtf.data = f"{data_association['ID_Plantes_Utilisation']}"
-                else:
-                    flash("Liaison non trouvée.", "danger")
-                    return redirect(url_for('plantes_utillisation_afficher', order_by="ASC", ID_Plante_Utillisation_sel=0))
+                form_delete.nom_plante_utilisation_delete_wtf.data = f"{data_association['FK_Plantes_Utilisation']} - {data_association['FK_Utilisation_Plantes']}"
 
-    except KeyError as e:
-        flash(f"Erreur : '{str(e)}'. Clé non trouvée dans la requête.", "danger")
-        return redirect(url_for('plantes_utillisation_afficher', order_by="ASC", ID_Plante_Utillisation_sel=0))
     except Exception as e:
         raise ExceptionPlanteUtilisationSupprimer(f"fichier : {Path(__file__).name}  ;  "
                                                   f"{plantes_utillisation_supprimer_wtf.__name__} ; "
