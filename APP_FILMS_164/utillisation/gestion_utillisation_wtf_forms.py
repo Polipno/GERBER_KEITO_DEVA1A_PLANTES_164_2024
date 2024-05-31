@@ -36,6 +36,11 @@ class FormWTFUpdateutillisation(FlaskForm):
 
 
 
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+
+
+
 class FormWTFDeleteutillisation(FlaskForm):
     """
         Dans le formulaire "utillisation_delete_wtf.html"
@@ -45,10 +50,11 @@ class FormWTFDeleteutillisation(FlaskForm):
         submit_btn_conf_del : Bouton de confirmation pour effacer un "utillisation".
         submit_btn_annuler : Bouton qui permet d'afficher la table "t_utillisation".
     """
-    nom_utillisation_delete_wtf = StringField("Effacer cette Utillisation")
+    nom_utillisation_delete_wtf = StringField("Effacer cette Utillisation", validators=[DataRequired()])
     submit_btn_del = SubmitField("Effacer Utillisation")
     submit_btn_conf_del = SubmitField("Etes-vous sur d'effacer ?")
     submit_btn_annuler = SubmitField("Annuler")
+
 
 
 

@@ -13,8 +13,9 @@ from APP_FILMS_164 import app
 from APP_FILMS_164.database.database_tools import DBconnection
 from APP_FILMS_164.erreurs.exceptions import *
 from APP_FILMS_164.utillisation.gestion_utillisation_wtf_forms import FormWTFAjouterutillisation, \
-    FormWTFDeletePlanteUtilisation, FormWTFUpdatePlanteUtilisation, FormWTFAjouterPlanteUtilisation
-from APP_FILMS_164.utillisation.gestion_utillisation_wtf_forms import FormWTFDeleteutillisation
+    FormWTFDeletePlanteUtilisation, FormWTFUpdatePlanteUtilisation, FormWTFAjouterPlanteUtilisation, \
+    FormWTFDeleteutillisation
+
 from APP_FILMS_164.utillisation.gestion_utillisation_wtf_forms import FormWTFUpdateutillisation
 
 """
@@ -236,7 +237,7 @@ def utillisation_delete_wtf():
                 valeur_delete_dictionnaire = {"value_ID_Utillisation": ID_Utillisation_delete}
                 print("valeur_delete_dictionnaire ", valeur_delete_dictionnaire)
 
-                str_sql_delete_films_utillisation = """DELETE FROM t_utillisation_film WHERE fk_utillisation = %(value_ID_Utillisation)s"""
+                str_sql_delete_films_utillisation = """DELETE FROM t_plantes_utilisation WHERE FK_Utilisation_Plantes = %(value_ID_Utillisation)s"""
                 str_sql_delete_idutillisation = """DELETE FROM t_utillisation WHERE ID_Utillisation = %(value_ID_Utillisation)s"""
                 # Manière brutale d'effacer d'abord la "fk_utillisation", même si elle n'existe pas dans la "t_utillisation_film"
                 # Ensuite on peut effacer le utillisation vu qu'il n'est plus "lié" (INNODB) dans la "t_utillisation_film"
@@ -255,10 +256,10 @@ def utillisation_delete_wtf():
             print(ID_Utillisation_delete, type(ID_Utillisation_delete))
 
             # Requête qui affiche tous les films_utillisation qui ont le utillisation que l'utilisateur veut effacer
-            str_sql_utillisation_films_delete = """SELECT ID_Utillisation_film, nom_film, ID_Utillisation, intitule_utillisation FROM t_utillisation_film 
-                                            INNER JOIN t_film ON t_utillisation_film.fk_film = t_film.id_film
-                                            INNER JOIN t_utillisation ON t_utillisation_film.fk_utillisation = t_utillisation.ID_Utillisation
-                                            WHERE fk_utillisation = %(value_ID_Utillisation)s"""
+            str_sql_utillisation_films_delete = """SELECT ID_Plantes_Utilisation, Nom_Commun, ID_Utillisation, Description_Utilisation FROM t_plantes_utilisation 
+                                            INNER JOIN t_plantes ON t_plantes_utilisation.FK_Plantes_Utilisation = t_plantes.id_plante
+                                            INNER JOIN t_utillisation ON t_plantes_utilisation.FK_Utilisation_Plantes = t_utillisation.ID_Utillisation
+                                            WHERE FK_Utilisation_Plantes = %(value_ID_Utillisation)s"""
 
             with DBconnection() as mydb_conn:
                 mydb_conn.execute(str_sql_utillisation_films_delete, valeur_select_dictionnaire)
@@ -270,18 +271,17 @@ def utillisation_delete_wtf():
                 session['data_films_attribue_utillisation_delete'] = data_films_attribue_utillisation_delete
 
                 # Opération sur la BD pour récupérer "ID_Utillisation" et "intitule_utillisation" de la "t_utillisation"
-                str_sql_ID_Utillisation = "SELECT ID_Utillisation, intitule_utillisation FROM t_utillisation WHERE ID_Utillisation = %(value_ID_Utillisation)s"
+                str_sql_ID_Utillisation = "SELECT ID_Utillisation, Description_Utilisation FROM t_utillisation WHERE ID_Utillisation = %(value_ID_Utillisation)s"
 
                 mydb_conn.execute(str_sql_ID_Utillisation, valeur_select_dictionnaire)
                 # Une seule valeur est suffisante "fetchone()",
                 # vu qu'il n'y a qu'un seul champ "nom utillisation" pour l'action DELETE
                 data_nom_utillisation = mydb_conn.fetchone()
                 print("data_nom_utillisation ", data_nom_utillisation, " type ", type(data_nom_utillisation), " utillisation ",
-                      data_nom_utillisation["intitule_utillisation"])
+                      data_nom_utillisation["Description_Utilisation"])
 
             # Afficher la valeur sélectionnée dans le champ du formulaire "utillisation_delete_wtf.html"
-            form_delete.nom_utillisation_delete_wtf.data = data_nom_utillisation["intitule_utillisation"]
-
+            form_delete.nom_utillisation_delete_wtf.data = data_nom_utillisation["Description_Utilisation"]
             # Le bouton pour l'action "DELETE" dans le form. "utillisation_delete_wtf.html" est caché.
             btn_submit_del = False
 
@@ -294,10 +294,6 @@ def utillisation_delete_wtf():
                            form_delete=form_delete,
                            btn_submit_del=btn_submit_del,
                            data_films_associes=data_films_attribue_utillisation_delete)
-
-
-
-
 
 
 @app.route("/plantes_utillisation_afficher/<string:order_by>/<int:ID_Plante_Utillisation_sel>", methods=['GET', 'POST'])

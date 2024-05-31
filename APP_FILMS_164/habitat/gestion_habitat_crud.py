@@ -233,12 +233,10 @@ def habitat_update_wtf():
 
 @app.route("/habitat_delete", methods=['GET', 'POST'])
 def habitat_delete_wtf():
-    data_films_attribue_habitat_delete = None
+    data_plantes_attribue_habitat_delete = None
     btn_submit_del = None
-    # L'utilisateur vient de cliquer sur le bouton "DELETE". Récupère la valeur de "id_habitat"
-    id_habitat_delete = request.values['id_habitat_btn_delete_html']
+    id_habitat_delete = request.values.get('id_habitat_btn_delete_html')
 
-    # Objet formulaire pour effacer le habitat sélectionné.
     form_delete = FormWTFDeletehabitat()
     try:
         print(" on submit ", form_delete.validate_on_submit())
@@ -248,70 +246,62 @@ def habitat_delete_wtf():
                 return redirect(url_for("habitat_afficher", order_by="ASC", id_habitat_sel=0))
 
             if form_delete.submit_btn_conf_del.data:
-                # Récupère les données afin d'afficher à nouveau
-                # le formulaire "habitat/habitat_delete_wtf.html" lorsque le bouton "Etes-vous sur d'effacer ?" est cliqué.
-                data_films_attribue_habitat_delete = session['data_films_attribue_habitat_delete']
-                print("data_films_attribue_habitat_delete ", data_films_attribue_habitat_delete)
+                data_plantes_attribue_habitat_delete = session.get('data_plantes_attribue_habitat_delete')
+                print("data_plantes_attribue_habitat_delete ", data_plantes_attribue_habitat_delete)
 
-                flash(f"Effacer le habitat de façon définitive de la BD !!!", "danger")
-                # L'utilisateur vient de cliquer sur le bouton de confirmation pour effacer...
-                # On affiche le bouton "Effacer habitat" qui va irrémédiablement EFFACER le habitat
+                flash(f"Effacer l'habitat de façon définitive de la BD !!!", "danger")
                 btn_submit_del = True
 
             if form_delete.submit_btn_del.data:
                 valeur_delete_dictionnaire = {"value_id_habitat": id_habitat_delete}
                 print("valeur_delete_dictionnaire ", valeur_delete_dictionnaire)
 
-                str_sql_delete_films_habitat = """DELETE FROM t_habitat_film WHERE fk_habitat = %(value_id_habitat)s"""
-                str_sql_delete_idhabitat = """DELETE FROM t_habitat WHERE id_habitat = %(value_id_habitat)s"""
-                # Manière brutale d'effacer d'abord la "fk_habitat", même si elle n'existe pas dans la "t_habitat_film"
-                # Ensuite on peut effacer le habitat vu qu'il n'est plus "lié" (INNODB) dans la "t_habitat_film"
+                str_sql_delete_plantes_habitat = """DELETE FROM t_plantes_habitat WHERE FK_Habitat_Plantes = %(value_id_habitat)s"""
+                str_sql_delete_idhabitat = """DELETE FROM t_habitat WHERE ID_Habitat = %(value_id_habitat)s"""
+
                 with DBconnection() as mconn_bd:
-                    mconn_bd.execute(str_sql_delete_films_habitat, valeur_delete_dictionnaire)
+                    try:
+                        mconn_bd.execute(str_sql_delete_plantes_habitat, valeur_delete_dictionnaire)
+                    except Exception as e:
+                        print(f"Error deleting from t_plantes_habitat: {e}")
+                        flash(f"Erreur lors de la suppression des enregistrements associés dans t_plantes_habitat: {e}",
+                              "danger")
+                        return redirect(url_for('habitat_afficher', order_by="ASC", id_habitat_sel=0))
+
                     mconn_bd.execute(str_sql_delete_idhabitat, valeur_delete_dictionnaire)
 
-                flash(f"habitat définitivement effacé !!", "success")
-                print(f"habitat définitivement effacé !!")
+                flash(f"Habitat définitivement effacé !!", "success")
+                print(f"Habitat définitivement effacé !!")
 
-                # afficher les données
                 return redirect(url_for('habitat_afficher', order_by="ASC", id_habitat_sel=0))
 
         if request.method == "GET":
             valeur_select_dictionnaire = {"value_id_habitat": id_habitat_delete}
             print(id_habitat_delete, type(id_habitat_delete))
 
-            # Requête qui affiche tous les films_habitat qui ont le habitat que l'utilisateur veut effacer
-            str_sql_habitat_films_delete = """SELECT id_habitat_film, nom_film, id_habitat, intitule_habitat FROM t_habitat_film 
-                                            INNER JOIN t_film ON t_habitat_film.fk_film = t_film.id_film
-                                            INNER JOIN t_habitat ON t_habitat_film.fk_habitat = t_habitat.id_habitat
-                                            WHERE fk_habitat = %(value_id_habitat)s"""
+            str_sql_habitat_plantes_delete = """SELECT ID_Plantes_Habitat, Nom_Commun, ID_Habitat, Description FROM t_plantes_habitat 
+                                            INNER JOIN t_plantes ON t_plantes_habitat.FK_Plantes_Habitat = t_plantes.ID_Plante
+                                            INNER JOIN t_habitat ON t_plantes_habitat.FK_Habitat_Plantes = t_habitat.ID_Habitat
+                                            WHERE FK_Habitat_Plantes = %(value_id_habitat)s"""
 
             with DBconnection() as mydb_conn:
-                mydb_conn.execute(str_sql_habitat_films_delete, valeur_select_dictionnaire)
-                data_films_attribue_habitat_delete = mydb_conn.fetchall()
-                print("data_films_attribue_habitat_delete...", data_films_attribue_habitat_delete)
+                mydb_conn.execute(str_sql_habitat_plantes_delete, valeur_select_dictionnaire)
+                data_plantes_attribue_habitat_delete = mydb_conn.fetchall()
+                print("data_plantes_attribue_habitat_delete...", data_plantes_attribue_habitat_delete)
 
-                # Nécessaire pour mémoriser les données afin d'afficher à nouveau
-                # le formulaire "habitat/habitat_delete_wtf.html" lorsque le bouton "Etes-vous sur d'effacer ?" est cliqué.
-                session['data_films_attribue_habitat_delete'] = data_films_attribue_habitat_delete
+                session['data_plantes_attribue_habitat_delete'] = data_plantes_attribue_habitat_delete
 
-                # Opération sur la BD pour récupérer "id_habitat" et "intitule_habitat" de la "t_habitat"
-                str_sql_id_habitat = "SELECT id_habitat, intitule_habitat FROM t_habitat WHERE id_habitat = %(value_id_habitat)s"
-
+                str_sql_id_habitat = "SELECT ID_Habitat, Description FROM t_habitat WHERE ID_Habitat = %(value_id_habitat)s"
                 mydb_conn.execute(str_sql_id_habitat, valeur_select_dictionnaire)
-                # Une seule valeur est suffisante "fetchone()",
-                # vu qu'il n'y a qu'un seul champ "nom habitat" pour l'action DELETE
                 data_nom_habitat = mydb_conn.fetchone()
                 print("data_nom_habitat ", data_nom_habitat, " type ", type(data_nom_habitat), " habitat ",
-                      data_nom_habitat["intitule_habitat"])
+                      data_nom_habitat["Description"])
 
-            # Afficher la valeur sélectionnée dans le champ du formulaire "habitat_delete_wtf.html"
-            form_delete.nom_habitat_delete_wtf.data = data_nom_habitat["intitule_habitat"]
-
-            # Le bouton pour l'action "DELETE" dans le form. "habitat_delete_wtf.html" est caché.
+            form_delete.nom_habitat_delete_wtf.data = data_nom_habitat["Description"]
             btn_submit_del = False
 
     except Exception as Exception_habitat_delete_wtf:
+        print(f"Error: {Exception_habitat_delete_wtf}")
         raise ExceptionGenreDeleteWtf(f"fichier : {Path(__file__).name}  ;  "
                                       f"{habitat_delete_wtf.__name__} ; "
                                       f"{Exception_habitat_delete_wtf}")
@@ -319,21 +309,7 @@ def habitat_delete_wtf():
     return render_template("habitat/habitat_delete_wtf.html",
                            form_delete=form_delete,
                            btn_submit_del=btn_submit_del,
-                           data_films_associes=data_films_attribue_habitat_delete)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                           data_plantes_associes=data_plantes_attribue_habitat_delete)
 
 
 from pathlib import Path

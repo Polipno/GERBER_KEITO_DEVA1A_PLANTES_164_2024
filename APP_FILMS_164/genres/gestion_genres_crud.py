@@ -227,6 +227,8 @@ def genre_update_wtf():
     Remarque :  Dans le champ "nom_genre_delete_wtf" du formulaire "genres/genre_delete_wtf.html",
                 le contrôle de la saisie est désactivée. On doit simplement cliquer sur "DELETE"
 """
+
+
 @app.route("/genre_delete", methods=['GET', 'POST'])
 def genre_delete_wtf():
     data_films_attribue_genre_delete = None
@@ -245,11 +247,20 @@ def genre_delete_wtf():
                 btn_submit_del = True
 
             if form_delete.submit_btn_del.data:
+                if not id_genre_delete:
+                    raise ValueError("id_genre_delete is None")
+
                 valeur_delete_dictionnaire = {"value_id_genre": id_genre_delete}
                 print("valeur_delete_dictionnaire ", valeur_delete_dictionnaire)
 
+                str_sql_delete_plantes_habitat = """DELETE FROM t_plantes_habitat WHERE FK_Plantes_Habitat = %(value_id_genre)s"""
+                str_sql_delete_plantes_exigence_de_croissance = """DELETE FROM t_plantes_exigence_de_croissance WHERE FK_Plantes_Exigence = %(value_id_genre)s"""
+                str_sql_delete_plantes_utilisation = """DELETE FROM t_plantes_utilisation WHERE FK_Plantes_Utilisation = %(value_id_genre)s"""
                 str_sql_delete_genre = """DELETE FROM t_plantes WHERE ID_Plante = %(value_id_genre)s"""
                 with DBconnection() as mconn_bd:
+                    mconn_bd.execute(str_sql_delete_plantes_habitat, valeur_delete_dictionnaire)
+                    mconn_bd.execute(str_sql_delete_plantes_exigence_de_croissance, valeur_delete_dictionnaire)
+                    mconn_bd.execute(str_sql_delete_plantes_utilisation, valeur_delete_dictionnaire)
                     mconn_bd.execute(str_sql_delete_genre, valeur_delete_dictionnaire)
 
                 flash(f"Plante définitivement effacé !!", "success")
@@ -258,6 +269,9 @@ def genre_delete_wtf():
                 return redirect(url_for('genres_afficher', order_by="ASC", id_genre_sel=0))
 
         if request.method == "GET":
+            if not id_genre_delete:
+                raise ValueError("id_genre_delete is None")
+
             valeur_select_dictionnaire = {"value_id_genre": id_genre_delete}
             print(id_genre_delete, type(id_genre_delete))
 
@@ -265,13 +279,22 @@ def genre_delete_wtf():
             with DBconnection() as mybd_conn:
                 mybd_conn.execute(str_sql_id_genre, valeur_select_dictionnaire)
                 data_nom_genre = mybd_conn.fetchone()
-                print("data_nom_genre ", data_nom_genre, " type ", type(data_nom_genre), " genre ", data_nom_genre["Nom_Commun"])
+                if data_nom_genre is None:
+                    raise ValueError(f"No data found for ID_Plante = {id_genre_delete}")
+
+                print("data_nom_genre ", data_nom_genre, " type ", type(data_nom_genre), " genre ",
+                      data_nom_genre["Nom_Commun"])
 
             form_delete.nom_genre_delete_wtf.data = data_nom_genre["Nom_Commun"]
 
             btn_submit_del = False
 
+    except KeyError as e:
+        print(f"KeyError: {str(e)}")
+        flash(f"Erreur interne: Clé manquante {str(e)}", "danger")
+        return redirect(url_for("genres_afficher", order_by="ASC", id_genre_sel=0))
     except Exception as Exception_genre_delete_wtf:
+        print(f"Exception: {str(Exception_genre_delete_wtf)}")
         raise ExceptionGenreDeleteWtf(f"fichier : {Path(__file__).name}  ;  "
                                       f"{genre_delete_wtf.__name__} ; "
                                       f"{Exception_genre_delete_wtf}")

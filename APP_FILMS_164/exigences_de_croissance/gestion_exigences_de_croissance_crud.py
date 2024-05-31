@@ -219,12 +219,10 @@ def exigences_de_croissance_update_wtf():
 
 @app.route("/exigences_de_croissance_delete", methods=['GET', 'POST'])
 def exigences_de_croissance_delete_wtf():
-    data_films_attribue_exigences_de_croissance_delete = None
+    data_plantes_attribue_exigences_de_croissance_delete = None
     btn_submit_del = None
-    # L'utilisateur vient de cliquer sur le bouton "DELETE". Récupère la valeur de "ID_Exigence"
-    ID_Exigence_delete = request.values['ID_Exigence_btn_delete_html']
+    ID_Exigence_delete = request.values.get('ID_Exigence_btn_delete_html')
 
-    # Objet formulaire pour effacer le exigences_de_croissance sélectionné.
     form_delete = FormWTFDeleteexigences_de_croissance()
     try:
         print(" on submit ", form_delete.validate_on_submit())
@@ -234,70 +232,68 @@ def exigences_de_croissance_delete_wtf():
                 return redirect(url_for("exigences_de_croissance_afficher", order_by="ASC", ID_Exigence_sel=0))
 
             if form_delete.submit_btn_conf_del.data:
-                # Récupère les données afin d'afficher à nouveau
-                # le formulaire "exigences_de_croissance/exigences_de_croissance_delete_wtf.html" lorsque le bouton "Etes-vous sur d'effacer ?" est cliqué.
-                data_films_attribue_exigences_de_croissance_delete = session['data_films_attribue_exigences_de_croissance_delete']
-                print("data_films_attribue_exigences_de_croissance_delete ", data_films_attribue_exigences_de_croissance_delete)
+                data_plantes_attribue_exigences_de_croissance_delete = session.get(
+                    'data_plantes_attribue_exigences_de_croissance_delete')
+                print("data_plantes_attribue_exigences_de_croissance_delete ",
+                      data_plantes_attribue_exigences_de_croissance_delete)
 
-                flash(f"Effacer le exigences_de_croissance de façon définitive de la BD !!!", "danger")
-                # L'utilisateur vient de cliquer sur le bouton de confirmation pour effacer...
-                # On affiche le bouton "Effacer exigences_de_croissance" qui va irrémédiablement EFFACER le exigences_de_croissance
+                flash(f"Effacer les exigences de croissance de façon définitive de la BD !!!", "danger")
                 btn_submit_del = True
 
             if form_delete.submit_btn_del.data:
                 valeur_delete_dictionnaire = {"value_ID_Exigence": ID_Exigence_delete}
                 print("valeur_delete_dictionnaire ", valeur_delete_dictionnaire)
 
-                str_sql_delete_films_exigences_de_croissance = """DELETE FROM t_exigences_de_croissance_film WHERE fk_exigences_de_croissance = %(value_ID_Exigence)s"""
+                str_sql_delete_plantes_exigences_de_croissance = """DELETE FROM t_plantes_exigence_de_croissance WHERE FK_Exigence_Plantes = %(value_ID_Exigence)s"""
                 str_sql_delete_idexigences_de_croissance = """DELETE FROM t_exigences_de_croissance WHERE ID_Exigence = %(value_ID_Exigence)s"""
-                # Manière brutale d'effacer d'abord la "fk_exigences_de_croissance", même si elle n'existe pas dans la "t_exigences_de_croissance_film"
-                # Ensuite on peut effacer le exigences_de_croissance vu qu'il n'est plus "lié" (INNODB) dans la "t_exigences_de_croissance_film"
+
                 with DBconnection() as mconn_bd:
-                    mconn_bd.execute(str_sql_delete_films_exigences_de_croissance, valeur_delete_dictionnaire)
+                    try:
+                        mconn_bd.execute(str_sql_delete_plantes_exigences_de_croissance, valeur_delete_dictionnaire)
+                    except Exception as e:
+                        print(f"Error deleting from t_plantes_exigence_de_croissance: {e}")
+                        flash(
+                            f"Erreur lors de la suppression des enregistrements associés dans t_plantes_exigence_de_croissance: {e}",
+                            "danger")
+                        return redirect(url_for('exigences_de_croissance_afficher', order_by="ASC", ID_Exigence_sel=0))
+
                     mconn_bd.execute(str_sql_delete_idexigences_de_croissance, valeur_delete_dictionnaire)
 
-                flash(f"Exigences de croissance définitivement effacé !!", "success")
-                print(f"exigences_de_croissance définitivement effacé !!")
+                flash(f"Exigences de croissance définitivement effacées !!", "success")
+                print(f"exigences_de_croissance définitivement effacées !!")
 
-                # afficher les données
                 return redirect(url_for('exigences_de_croissance_afficher', order_by="ASC", ID_Exigence_sel=0))
 
         if request.method == "GET":
             valeur_select_dictionnaire = {"value_ID_Exigence": ID_Exigence_delete}
             print(ID_Exigence_delete, type(ID_Exigence_delete))
 
-            # Requête qui affiche tous les films_exigences_de_croissance qui ont le exigences_de_croissance que l'utilisateur veut effacer
-            str_sql_exigences_de_croissance_films_delete = """SELECT ID_Exigence_film, nom_film, ID_Exigence, intitule_exigences_de_croissance FROM t_exigences_de_croissance_film 
-                                            INNER JOIN t_film ON t_exigences_de_croissance_film.fk_film = t_film.id_film
-                                            INNER JOIN t_exigences_de_croissance ON t_exigences_de_croissance_film.fk_exigences_de_croissance = t_exigences_de_croissance.ID_Exigence
-                                            WHERE fk_exigences_de_croissance = %(value_ID_Exigence)s"""
+            str_sql_exigences_de_croissance_plantes_delete = """SELECT ID_Plantes_Exigence_De_Coissance, Nom_Commun, ID_Exigence, Lumière FROM t_plantes_exigence_de_croissance 
+                                            INNER JOIN t_plantes ON t_plantes_exigence_de_croissance.FK_Plantes_Exigence = t_plantes.ID_Plante
+                                            INNER JOIN t_exigences_de_croissance ON t_plantes_exigence_de_croissance.FK_Exigence_Plantes = t_exigences_de_croissance.ID_Exigence
+                                            WHERE FK_Exigence_Plantes = %(value_ID_Exigence)s"""
 
             with DBconnection() as mydb_conn:
-                mydb_conn.execute(str_sql_exigences_de_croissance_films_delete, valeur_select_dictionnaire)
-                data_films_attribue_exigences_de_croissance_delete = mydb_conn.fetchall()
-                print("data_films_attribue_exigences_de_croissance_delete...", data_films_attribue_exigences_de_croissance_delete)
+                mydb_conn.execute(str_sql_exigences_de_croissance_plantes_delete, valeur_select_dictionnaire)
+                data_plantes_attribue_exigences_de_croissance_delete = mydb_conn.fetchall()
+                print("data_plantes_attribue_exigences_de_croissance_delete...",
+                      data_plantes_attribue_exigences_de_croissance_delete)
 
-                # Nécessaire pour mémoriser les données afin d'afficher à nouveau
-                # le formulaire "exigences_de_croissance/exigences_de_croissance_delete_wtf.html" lorsque le bouton "Etes-vous sur d'effacer ?" est cliqué.
-                session['data_films_attribue_exigences_de_croissance_delete'] = data_films_attribue_exigences_de_croissance_delete
+                session[
+                    'data_plantes_attribue_exigences_de_croissance_delete'] = data_plantes_attribue_exigences_de_croissance_delete
 
-                # Opération sur la BD pour récupérer "ID_Exigence" et "intitule_exigences_de_croissance" de la "t_exigences_de_croissance"
-                str_sql_ID_Exigence = "SELECT ID_Exigence, intitule_exigences_de_croissance FROM t_exigences_de_croissance WHERE ID_Exigence = %(value_ID_Exigence)s"
-
+                str_sql_ID_Exigence = "SELECT ID_Exigence, Lumière FROM t_exigences_de_croissance WHERE ID_Exigence = %(value_ID_Exigence)s"
                 mydb_conn.execute(str_sql_ID_Exigence, valeur_select_dictionnaire)
-                # Une seule valeur est suffisante "fetchone()",
-                # vu qu'il n'y a qu'un seul champ "nom exigences_de_croissance" pour l'action DELETE
                 data_nom_exigences_de_croissance = mydb_conn.fetchone()
-                print("data_nom_exigences_de_croissance ", data_nom_exigences_de_croissance, " type ", type(data_nom_exigences_de_croissance), " exigences_de_croissance ",
-                      data_nom_exigences_de_croissance["intitule_exigences_de_croissance"])
+                print("data_nom_exigences_de_croissance ", data_nom_exigences_de_croissance, " type ",
+                      type(data_nom_exigences_de_croissance), " exigences_de_croissance ",
+                      data_nom_exigences_de_croissance["Lumière"])
 
-            # Afficher la valeur sélectionnée dans le champ du formulaire "exigences_de_croissance_delete_wtf.html"
-            form_delete.nom_exigences_de_croissance_delete_wtf.data = data_nom_exigences_de_croissance["intitule_exigences_de_croissance"]
-
-            # Le bouton pour l'action "DELETE" dans le form. "exigences_de_croissance_delete_wtf.html" est caché.
+            form_delete.nom_exigences_de_croissance_delete_wtf.data = data_nom_exigences_de_croissance["Lumière"]
             btn_submit_del = False
 
     except Exception as Exception_exigences_de_croissance_delete_wtf:
+        print(f"Error: {Exception_exigences_de_croissance_delete_wtf}")
         raise ExceptionGenreDeleteWtf(f"fichier : {Path(__file__).name}  ;  "
                                       f"{exigences_de_croissance_delete_wtf.__name__} ; "
                                       f"{Exception_exigences_de_croissance_delete_wtf}")
@@ -305,7 +301,7 @@ def exigences_de_croissance_delete_wtf():
     return render_template("exigences_de_croissance/exigences_de_croissance_delete_wtf.html",
                            form_delete=form_delete,
                            btn_submit_del=btn_submit_del,
-                           data_films_associes=data_films_attribue_exigences_de_croissance_delete)
+                           data_plantes_associes=data_plantes_attribue_exigences_de_croissance_delete)
 
 
 @app.route("/plantes_exigences_de_croissance_afficher/<string:order_by>/<int:id_plante_exigences_de_croissance_sel>", methods=['GET', 'POST'])
