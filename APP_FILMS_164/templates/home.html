@@ -1,20 +1,41 @@
 {% extends "base.html" %}
 {% block title %} Homepage FILMS {% endblock %}
+{% block head %}
+<style>
+    body {
+        color: lightgreen;
+    }
+</style>
+{% endblock %}
 {% block body %}
+
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-12">
-			<h3>
-				Démo complète du 2023.03.25
-			</h3>
-			<h3>
-				CRUD sur 3 tables autour des films et leurs genres associés<br>
-			</h3>
-			<ul>
-				<li class="list-item">
-					Lire le readme.md
-				</li>
-			</ul>
+<br>
+			<h2>
+				Explication du projet
+			</h2>
+			<p>
+
+Pour commencer, le projet consistera à noter toutes les plantes qui ont poussé dans le jardin de ma grand-maman.<br>
+				Pour l'instant, nous avons inscrit les plantes dont nous nous sommes souvenus avoir planté, et nous pensons ajouter davantage de données dans les années à venir.<br>
+				Ma grand-maman a toujours voulu avoir un endroit où elle pourrait retrouver les plantes qu'elle avait déjà plantées, donc ce projet a été idéal pour réaliser ce souhait qu'elle avait depuis longtemps.<br>
+
+
+			</p>
+<br>
+			<img src="../static/images/Jardin_de_ma_grand_maman.jpg" alt="Jardin de ma grand-maman" width="300"><br><br>
+			<h2>
+				Comment faire fonctionner le projet ? (même si vous avez déja reussi si vous êtes là)
+			</h2><br>
+			<p>
+			Donc, avant de commencer, il faut installer un environnement de développement SQL comme Laragon, par exemple, ainsi qu'un IDE pour Python, comme PyCharm avec Python.<br>
+				Ensuite, on peut exécuter le fichier 1_ImportationDumpSql.py qui est situé dans le dossier database. <br>
+				À présent, on peut exécuter le fichier run_mon_app.py et cliquer sur le lien affiché dans le terminal. <br>
+				Et voilà, maintenant que vous êtes sur le site, sentez-vous libre de faire des expériences sur les différentes tables des plantes.<br>
+			</p>
+
 		</div>
 	</div>
 </div>
