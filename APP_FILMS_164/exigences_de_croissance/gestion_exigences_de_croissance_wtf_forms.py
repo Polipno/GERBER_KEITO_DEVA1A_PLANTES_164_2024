@@ -27,8 +27,20 @@ class FormWTFAjouterexigences_de_croissance(FlaskForm):
                                                                                   "apostrophe, de double trait union")
                                                                    ])
 
-    eau_wtf = StringField("Eau", validators=[DataRequired()])
-    type_de_sol_wtf = StringField("Type de sol", validators=[DataRequired()])
+    eau_wtf = StringField("Eau", validators=[Length(min=2, max=20, message="min 2 max 20"),
+                                                                   Regexp(lumiere_regexp,
+                                                                          message="Pas de chiffres, de caractères "
+                                                                                  "spéciaux, "
+                                                                                  "d'espace à double, de double "
+                                                                                  "apostrophe, de double trait union")
+                                                                 ])
+    type_de_sol_wtf = StringField("Type de sol", validators=[Length(min=2, max=20, message="min 2 max 20"),
+                                                                   Regexp(lumiere_regexp,
+                                                                          message="Pas de chiffres, de caractères "
+                                                                                  "spéciaux, "
+                                                                                  "d'espace à double, de double "
+                                                                                  "apostrophe, de double trait union")
+                                                                 ])
     submit = SubmitField("Enregistrer")
 
 

@@ -8,12 +8,17 @@ class FormWTFAjouterGenres(FlaskForm):
         Length(min=2, max=20, message="min 2 max 20"),
         Regexp(nom_genre_regexp, message="Pas de chiffres, de caractères spéciaux, d'espace à double, de double apostrophe, de double trait union")
     ])
-    nom_scientifique_wtf = StringField("Nom Scientifique", validators=[DataRequired()])
-    famille_wtf = StringField("Famille", validators=[DataRequired()])
+    nom_scientifique_wtf = StringField("Nom Scientifique", validators=[ Length(min=2, max=20, message="min 2 max 20"),
+        Regexp(nom_genre_regexp, message="Pas de chiffres, de caractères spéciaux, d'espace à double, de double apostrophe, de double trait union")
+   ])
+    famille_wtf = StringField("Famille", validators=[ Length(min=2, max=20, message="min 2 max 20"),
+        Regexp(nom_genre_regexp, message="Pas de chiffres, de caractères spéciaux, d'espace à double, de double apostrophe, de double trait union")
+   ])
     submit = SubmitField("Enregistrer")
 
 class FormWTFUpdateGenre(FlaskForm):
-    nom_genre_update_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
+    nom_genre_update_regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ]([A-Za-zÀ-ÖØ-öø-ÿ]|['\- ](?=[A-Za-zÀ-ÖØ-öø-ÿ]))*$"
+
     nom_genre_update_wtf = StringField("Nom commun ", validators=[Length(min=2, max=20, message="min 2 max 20"),
                                                                           Regexp(nom_genre_update_regexp,
                                                                                  message="Pas de chiffres, de "

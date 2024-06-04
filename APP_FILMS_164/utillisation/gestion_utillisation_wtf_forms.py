@@ -52,7 +52,7 @@ class FormWTFDeleteutillisation(FlaskForm):
     """
     nom_utillisation_delete_wtf = StringField("Effacer cette Utillisation", validators=[DataRequired()])
     submit_btn_del = SubmitField("Effacer Utillisation")
-    submit_btn_conf_del = SubmitField("Etes-vous sur d'effacer ?")
+
     submit_btn_annuler = SubmitField("Annuler")
 
 

@@ -222,16 +222,7 @@ def utillisation_delete_wtf():
             if form_delete.submit_btn_annuler.data:
                 return redirect(url_for("utillisation_afficher", order_by="ASC", ID_Utillisation_sel=0))
 
-            if form_delete.submit_btn_conf_del.data:
-                # Récupère les données afin d'afficher à nouveau
-                # le formulaire "utillisation/utillisation_delete_wtf.html" lorsque le bouton "Etes-vous sur d'effacer ?" est cliqué.
-                data_films_attribue_utillisation_delete = session['data_films_attribue_utillisation_delete']
-                print("data_films_attribue_utillisation_delete ", data_films_attribue_utillisation_delete)
 
-                flash(f"Effacer le utillisation de façon définitive de la BD !!!", "danger")
-                # L'utilisateur vient de cliquer sur le bouton de confirmation pour effacer...
-                # On affiche le bouton "Effacer utillisation" qui va irrémédiablement EFFACER le utillisation
-                btn_submit_del = True
 
             if form_delete.submit_btn_del.data:
                 valeur_delete_dictionnaire = {"value_ID_Utillisation": ID_Utillisation_delete}
