@@ -433,7 +433,6 @@ def liaison_update_wtf():
     if request.method == "GET":
         id_liaison_update = request.args.get('id_liaison')
         if id_liaison_update:
-            # Charger les données existantes pour remplir le formulaire
             str_sql_liaison = """SELECT ID_Plantes_Habitat, FK_plantes_habitat, FK_habitat_plantes 
                                  FROM t_plantes_habitat 
                                  WHERE ID_Plantes_Habitat = %(value_id_liaison)s"""
@@ -444,51 +443,68 @@ def liaison_update_wtf():
                     data_liaison = mybd_conn.fetchone()
 
                     if data_liaison:
-                        form_update.id_liaison.data = data_liaison["ID_Plantes_Habitat"]
-                        form_update.fk_plantes_habitat_wtf.data = data_liaison["FK_plantes_habitat"]
-                        form_update.fk_habitat_plantes_wtf.data = data_liaison["FK_habitat_plantes"]
-                    else:
-                        flash(f"La liaison avec l'ID {id_liaison_update} n'existe pas.", "danger")
-                        return redirect(url_for('plantes_habitat_afficher', order_by="ASC", id_plante_habitat_sel=0))
-            except Exception as Exception_liaison_update_wtf:
-                raise ExceptionGenreUpdateWtf(
-                    f"fichier : {Path(__file__).name}  ;  "
-                    f"{liaison_update_wtf.__name__} ; "
-                    f"{Exception_liaison_update_wtf}"
-                )
+                        form_update.id_liaison.data = str(data_liaison["ID_Plantes_Habitat"])
+
+                        # Récupérer les plantes et pré-sélectionner la plante actuelle
+                        str_sql_plantes = "SELECT ID_Plante, Nom_Commun FROM t_plantes"
+                        mybd_conn.execute(str_sql_plantes)
+                        data_plantes = mybd_conn.fetchall()
+                        form_update.fk_plantes_habitat_wtf.choices = [(plante["ID_Plante"], plante["Nom_Commun"]) for plante in data_plantes]
+                        form_update.fk_plantes_habitat_wtf.data = str(data_liaison["FK_plantes_habitat"])  # Utilisation de .data
+
+                        # Récupérer les habitats et pré-sélectionner l'habitat actuel
+                        str_sql_habitats = "SELECT ID_Habitat, Description FROM t_habitat"
+                        mybd_conn.execute(str_sql_habitats)
+                        data_habitats = mybd_conn.fetchall()
+                        form_update.fk_habitat_plantes_wtf.choices = [(habitat["ID_Habitat"], habitat["Description"]) for habitat in data_habitats]
+                        form_update.fk_habitat_plantes_wtf.data = str(data_liaison["FK_habitat_plantes"])  # Utilisation de .data
+
+            except Exception as e:
+                flash(f"Erreur lors de la récupération des données de liaison : {str(e)}", "danger")
+                return redirect(url_for('plantes_habitat_afficher'))
 
     elif request.method == "POST":
-        id_liaison_update = form_update.id_liaison.data  # Récupérer l'ID depuis le champ caché
-        if not id_liaison_update:
-            flash("Aucun ID de liaison n'a été fourni pour la mise à jour.", "danger")
-            return redirect(url_for('plantes_habitat_afficher', order_by="ASC", id_plante_habitat_sel=0))
+        # Récupérer les plantes et habitats pour les choix du formulaire
+        try:
+            with DBconnection() as mybd_conn:
+                str_sql_plantes = "SELECT ID_Plante, Nom_Commun FROM t_plantes"
+                mybd_conn.execute(str_sql_plantes)
+                data_plantes = mybd_conn.fetchall()
+                form_update.fk_plantes_habitat_wtf.choices = [(plante["ID_Plante"], plante["Nom_Commun"]) for plante in data_plantes]
+
+                str_sql_habitats = "SELECT ID_Habitat, Description FROM t_habitat"
+                mybd_conn.execute(str_sql_habitats)
+                data_habitats = mybd_conn.fetchall()
+                form_update.fk_habitat_plantes_wtf.choices = [(habitat["ID_Habitat"], habitat["Description"]) for habitat in data_habitats]
+
+        except Exception as e:
+            flash(f"Erreur lors de la récupération des données : {str(e)}", "danger")
 
         if form_update.validate_on_submit():
+            id_liaison_update = form_update.id_liaison.data
             fk_plantes_habitat = form_update.fk_plantes_habitat_wtf.data
             fk_habitat_plantes = form_update.fk_habitat_plantes_wtf.data
 
-            valeur_update_dictionnaire = {
-                "ID_Plantes_Habitat": id_liaison_update,
-                "FK_plantes_habitat": fk_plantes_habitat,
-                "FK_habitat_plantes": fk_habitat_plantes
-            }
-
-            str_sql_update_liaison = """UPDATE t_plantes_habitat 
-                                        SET FK_plantes_habitat = %(FK_plantes_habitat)s, FK_habitat_plantes = %(FK_habitat_plantes)s 
-                                        WHERE ID_Plantes_Habitat = %(ID_Plantes_Habitat)s"""
             try:
+                valeur_update_dictionnaire = {
+                    "ID_Plantes_Habitat": int(id_liaison_update),
+                    "FK_plantes_habitat": int(fk_plantes_habitat),
+                    "FK_habitat_plantes": int(fk_habitat_plantes)
+                }
+
+                str_sql_update_liaison = """UPDATE t_plantes_habitat 
+                                            SET FK_plantes_habitat = %(FK_plantes_habitat)s, FK_habitat_plantes = %(FK_habitat_plantes)s 
+                                            WHERE ID_Plantes_Habitat = %(ID_Plantes_Habitat)s"""
                 with DBconnection() as mconn_bd:
                     mconn_bd.execute(str_sql_update_liaison, valeur_update_dictionnaire)
                 flash("Liaison mise à jour !!", "success")
                 return redirect(url_for('plantes_habitat_afficher', order_by="ASC", id_plante_habitat_sel=id_liaison_update))
-            except Exception as Exception_liaison_update_wtf:
-                raise ExceptionGenreUpdateWtf(
-                    f"fichier : {Path(__file__).name}  ;  "
-                    f"{liaison_update_wtf.__name__} ; "
-                    f"{Exception_liaison_update_wtf}"
-                )
+            except Exception as e:
+                flash(f"Erreur lors de la mise à jour de la liaison : {str(e)}", "danger")
+        else:
+            flash("Veuillez insérer des données valides.", "danger")
 
-    return render_template("habitat/liaison_update_wtf.html", form_update=form_update, id_liaison=id_liaison_update)
+    return render_template("habitat/liaison_update_wtf.html", form_update=form_update)
 
 @app.route("/liaison_delete", methods=['GET', 'POST'])
 def liaison_delete_wtf():

@@ -4,7 +4,7 @@
     Gestion des formulaires avec WTF
 """
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateField
+from wtforms import StringField, DateField, SelectField, HiddenField
 from wtforms import SubmitField
 from wtforms.validators import Length, InputRequired, DataRequired
 from wtforms.validators import Regexp
@@ -25,6 +25,10 @@ class FormWTFAjouterhabitat(FlaskForm):
                                                                    ])
     submit = SubmitField("Enregistrer")
 
+
+
+
+
 class FormWTFUpdatehabitat(FlaskForm):
     nom_habitat_update_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
     nom_habitat_update_wtf = StringField("Description", validators=[
@@ -32,7 +36,6 @@ class FormWTFUpdatehabitat(FlaskForm):
         Regexp(nom_habitat_update_regexp, message="Pas de chiffres, de caractères spéciaux, d'espace à double, de double apostrophe, de double trait union")
     ])
     submit = SubmitField("Update")
-
 
 class FormWTFDeletehabitat(FlaskForm):
     """
@@ -58,11 +61,13 @@ class FormWTFAjouterLiaison(FlaskForm):
     fk_habitat_plantes_wtf = IntegerField("ID Habitat", validators=[DataRequired(), NumberRange(min=1, message="Veuillez entrer un ID valide.")])
     submit = SubmitField("Ajouter Liaison")
 
+
+
 class FormWTFUpdateLiaison(FlaskForm):
-    id_liaison = HiddenField("ID Liaison")  # Champ caché pour l'ID de la liaison
-    fk_plantes_habitat_wtf = IntegerField("ID Plante", validators=[DataRequired(), NumberRange(min=1, message="Veuillez entrer un ID valide.")])
-    fk_habitat_plantes_wtf = IntegerField("ID Habitat", validators=[DataRequired(), NumberRange(min=1, message="Veuillez entrer un ID valide.")])
-    submit = SubmitField("Mettre à jour Liaison")
+    id_liaison = HiddenField('ID Liaison')
+    fk_plantes_habitat_wtf = SelectField('Plante', choices=[], validators=[DataRequired()])
+    fk_habitat_plantes_wtf = SelectField('Habitat', choices=[], validators=[DataRequired()])
+    submit = SubmitField('Mettre à Jour')
 
 class FormWTFDeleteLiaison(FlaskForm):
     fk_plantes_habitat_delete_wtf = IntegerField("ID Plante", render_kw={'readonly': True})
