@@ -12,11 +12,11 @@
                 <thead>
                     <tr>
                         <th class="align-middle">ID Liaison</th>
-                        <th class="align-middle">ID Plante</th>
+
                         <th class="align-middle">Nom Commun</th>
                         <th class="align-middle">Nom Scientifique</th>
                         <th class="align-middle">Famille</th>
-                        <th class="align-middle">ID Habitat</th>
+
                         <th class="align-middle">Description</th>
                         <th class="align-middle text-center">Actions</th>
                     </tr>
@@ -25,11 +25,11 @@
                     {% for row in data %}
                     <tr>
                         <td class="align-middle">{{ row.ID_Plantes_Habitat }}</td>
-                        <td class="align-middle">{{ row.ID_Plante }}</td>
+
                         <td class="align-middle">{{ row.Nom_Commun }}</td>
                         <td class="align-middle">{{ row.Nom_Scientifique }}</td>
                         <td class="align-middle">{{ row.Famille }}</td>
-                        <td class="align-middle">{{ row.ID_Habitat }}</td>
+
                         <td class="align-middle">{{ row.Description }}</td>
                         <td class="text-center align-middle">
                              <a class="btn btn-primary" href="{{ url_for('liaison_ajouter_wtf') }}" role="button">Ajouter</a>

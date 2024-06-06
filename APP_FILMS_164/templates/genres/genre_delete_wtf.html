@@ -4,19 +4,19 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <p>Effacer une Plante</p>
+            <p></p>
             <form action="" method="POST" novalidate>
                 {{ form_delete.hidden_tag() }}
                 <table class="table table-bordered table-sm">
                     {% if data_films_associes %}
-                        <h3>Cette Plante est associé avec le(s) table(s) suivant(s) :</h3>
+                        <h3></h3>
                     {% else %}
-                        <h3>Cette Plante à effacer n'est associé à aucune table.</h3>
+                        <h3></h3>
                     {% endif %}
                     {% if data_films_associes %}
                         <thead>
                             <tr>
-                                <th>FILM(S)</th>
+                                <th></th>
                             </tr>
                         </thead>
                         {% for row in data_films_associes %}

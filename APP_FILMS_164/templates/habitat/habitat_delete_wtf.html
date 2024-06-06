@@ -5,22 +5,22 @@
 	<div class="row">
 		<div class="col-md-12">
 			<p>
-				Effacer un Habitat
+
 			</p>
 			<form action="" method="POST" novalidate>
 				<!-- Protection contre les attaques Cross-Site Request Forgery (CSRF) -->
 				{{ form_delete.hidden_tag() }}
 				<table class="table table-bordered table-sm">
 					{% if data_films_associes %}
-						<h3>Ce Habitat est associé avec le(s) table(s) suivant(s) :</h3>
+						<h3></h3>
 					{% else %}
-						<h3>Ce Habitat à effacer n'est associé à aucune table.</h3>
+						<h3></h3>
 					{% endif %}
 					{% if data_films_associes %}
 						<thead>
 							<tr>
 								<th>
-									FILM(S)
+
 								</th>
 							</tr>
 						</thead>
