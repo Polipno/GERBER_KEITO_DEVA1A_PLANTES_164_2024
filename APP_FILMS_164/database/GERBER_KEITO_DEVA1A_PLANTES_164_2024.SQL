@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `t_exigences_de_croissance` (
   `Eau` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Les besoins en eau',
   `Type_De_Sol` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Le type de sol préféré.',
   PRIMARY KEY (`ID_Exigence`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Cette table détaille les conditions requises pour la croissance de chaque plante.';
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Cette table détaille les conditions requises pour la croissance de chaque plante.';
 
 -- Listage des données de la table gerber_keito_deva1a_plantes_164_2024.t_exigences_de_croissance : ~19 rows (environ)
 INSERT INTO `t_exigences_de_croissance` (`ID_Exigence`, `Lumière`, `Eau`, `Type_De_Sol`) VALUES
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `t_habitat` (
   `ID_Habitat` int NOT NULL AUTO_INCREMENT COMMENT 'Un identifiant unique pour chaque habitat.',
   `Description` text COMMENT 'Description de l''habitat',
   PRIMARY KEY (`ID_Habitat`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Cette table contient des informations sur l''habitat naturel des plantes.';
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Cette table contient des informations sur l''habitat naturel des plantes.';
 
 -- Listage des données de la table gerber_keito_deva1a_plantes_164_2024.t_habitat : ~8 rows (environ)
 INSERT INTO `t_habitat` (`ID_Habitat`, `Description`) VALUES
@@ -79,9 +79,9 @@ CREATE TABLE IF NOT EXISTS `t_plantes` (
   `Nom_Scientifique` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Le nom scientifique de la plante.',
   `Famille` varchar(100) DEFAULT NULL COMMENT 'La famille botanique à laquelle appartient la plante.',
   PRIMARY KEY (`ID_Plante`)
-) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Cette table contiendra les informations de base sur chaque plante.';
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Cette table contiendra les informations de base sur chaque plante.';
 
--- Listage des données de la table gerber_keito_deva1a_plantes_164_2024.t_plantes : ~52 rows (environ)
+-- Listage des données de la table gerber_keito_deva1a_plantes_164_2024.t_plantes : ~49 rows (environ)
 INSERT INTO `t_plantes` (`ID_Plante`, `Nom_Commun`, `Nom_Scientifique`, `Famille`) VALUES
 	(1, 'physocarpus', 'physocarpus opulifolius', 'rosaceae'),
 	(2, 'crocus', 'crocus sativus', 'iridaceae'),
@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS `t_plantes_exigence_de_croissance` (
   CONSTRAINT `FK_t_plantes_exigence_de_croissance_t_plantes` FOREIGN KEY (`FK_Plantes_Exigence`) REFERENCES `t_plantes` (`ID_Plante`)
 ) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table gerber_keito_deva1a_plantes_164_2024.t_plantes_exigence_de_croissance : ~32 rows (environ)
+-- Listage des données de la table gerber_keito_deva1a_plantes_164_2024.t_plantes_exigence_de_croissance : ~48 rows (environ)
 INSERT INTO `t_plantes_exigence_de_croissance` (`ID_Plantes_Exigence_De_Coissance`, `FK_Plantes_Exigence`, `FK_Exigence_Plantes`) VALUES
 	(2, 2, 2),
 	(5, 5, 3),
@@ -208,9 +208,9 @@ CREATE TABLE IF NOT EXISTS `t_plantes_habitat` (
   KEY `FK_Habitat_Plantes` (`FK_Plantes_Habitat`) USING BTREE,
   CONSTRAINT `FK_t_plantes_habitat_t_habitat` FOREIGN KEY (`FK_Habitat_Plantes`) REFERENCES `t_habitat` (`ID_Habitat`),
   CONSTRAINT `FK_t_plantes_habitat_t_plantes` FOREIGN KEY (`FK_Plantes_Habitat`) REFERENCES `t_plantes` (`ID_Plante`)
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table gerber_keito_deva1a_plantes_164_2024.t_plantes_habitat : ~39 rows (environ)
+-- Listage des données de la table gerber_keito_deva1a_plantes_164_2024.t_plantes_habitat : ~50 rows (environ)
 INSERT INTO `t_plantes_habitat` (`ID_Plantes_Habitat`, `FK_Habitat_Plantes`, `FK_Plantes_Habitat`) VALUES
 	(1, 3, 1),
 	(2, 4, 2),
@@ -260,7 +260,8 @@ INSERT INTO `t_plantes_habitat` (`ID_Plantes_Habitat`, `FK_Habitat_Plantes`, `FK
 	(61, 4, 47),
 	(62, 5, 48),
 	(63, 4, 49),
-	(64, 4, 51);
+	(64, 4, 51),
+	(69, 3, 33);
 
 -- Listage de la structure de table gerber_keito_deva1a_plantes_164_2024. t_plantes_utilisation
 DROP TABLE IF EXISTS `t_plantes_utilisation`;
@@ -273,9 +274,9 @@ CREATE TABLE IF NOT EXISTS `t_plantes_utilisation` (
   KEY `FK_Plantes_Utilisation` (`FK_Utilisation_Plantes`) USING BTREE,
   CONSTRAINT `FK_t_plantes_utilisation_t_plantes` FOREIGN KEY (`FK_Plantes_Utilisation`) REFERENCES `t_plantes` (`ID_Plante`),
   CONSTRAINT `FK_t_plantes_utilisation_t_utillisation` FOREIGN KEY (`FK_Utilisation_Plantes`) REFERENCES `t_utillisation` (`ID_Utillisation`)
-) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Listage des données de la table gerber_keito_deva1a_plantes_164_2024.t_plantes_utilisation : ~5 rows (environ)
+-- Listage des données de la table gerber_keito_deva1a_plantes_164_2024.t_plantes_utilisation : ~49 rows (environ)
 INSERT INTO `t_plantes_utilisation` (`ID_Plantes_Utilisation`, `FK_Utilisation_Plantes`, `FK_Plantes_Utilisation`) VALUES
 	(24, 2, 24),
 	(31, 3, 31),
@@ -333,9 +334,9 @@ CREATE TABLE IF NOT EXISTS `t_utillisation` (
   `ID_Utillisation` int NOT NULL AUTO_INCREMENT COMMENT 'Un identifiant unique pour chaque utilisation.',
   `Description_Utilisation` text COMMENT 'Description de l''utilisation de la plante.',
   PRIMARY KEY (`ID_Utillisation`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Informations sur l''utilisation des plantes, par exemple à des fins médicinales ou culinaires.';
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Informations sur l''utilisation des plantes, par exemple à des fins médicinales ou culinaires.';
 
--- Listage des données de la table gerber_keito_deva1a_plantes_164_2024.t_utillisation : ~5 rows (environ)
+-- Listage des données de la table gerber_keito_deva1a_plantes_164_2024.t_utillisation : ~3 rows (environ)
 INSERT INTO `t_utillisation` (`ID_Utillisation`, `Description_Utilisation`) VALUES
 	(2, 'Culinaire'),
 	(3, 'fruitier'),
